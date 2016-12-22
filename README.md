@@ -13,6 +13,5 @@ Our Github Working Scheme will be comprised as follows:
   - master branch: deployment
   - staging branch: staging/testing
   - feature branches: by feature, using descriptive names for branch naming.
-  - extensive readme
 
 Project Management, ticketing, issue tracking, etc. will be handled via Waffle.
