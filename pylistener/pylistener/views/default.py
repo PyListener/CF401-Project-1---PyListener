@@ -3,7 +3,11 @@ from pyramid.view import view_config
 
 from sqlalchemy.exc import DBAPIError
 
-from ..models import MyModel
+from pyramid.httpexceptions import HTTPFound
+
+from pylistener.models import User
+from pylistener.security import check_credentials
+from pyramid.security import remember, forget
 
 
 @view_config(route_name='home', renderer='../templates/main.jinja2')
@@ -18,14 +22,31 @@ def home_view(request):
 
 @view_config(route_name='login', renderer='../templates/login.jinja2')
 def login_view(request):
-    '''Handle the login route.'''
-    pass
+    if request.POST:
+        query = request.dbsession.query(User)
+        username = request.POST["username"]
+        password = request.POST["password"]
+        real_password = None
+        for user in query.all():
+            if user.username == username:
+                real_password = user.hashed_password
+                break
+        if real_password:
+            if check_credentials(password, real_password):
+                auth_head = remember(request, username)
+            return HTTPFound(
+                location=request.route_url("home"),
+                headers=auth_head
+            )
+
+    return {}
 
 
-@view_config(route_name='logout')
+@view_config(route_name='logout', permission="manage")
 def logout_view(request):
     '''Handle the logout route.'''
-    pass
+    auth_head = forget(request)
+    return HTTPFound(location=request.route_url("home"), headers=auth_head)
 
 
 @view_config(route_name='manage', renderer='../templates/manage.jinja2')
@@ -37,7 +58,18 @@ def manage_view(request):
 @view_config(route_name='register', renderer='../templates/register.jinja2')
 def register_view(request):
     '''Handle the register route.'''
-    pass
+    if request.POST:
+        username = request.POST["username"]
+        password = request.POST["password"]
+        email = request.POST["email"]
+        new_user = User(
+            username=username,
+            hashed_password=password.pwd_context.hash(password),
+            email=email
+        )
+        request.dbsession.add(new_user)
+        return HTTPFound(location=request.route_url('manage', id=new_user.username))
+    return {}
 
 
 @view_config(route_name='categories', renderer='../templates/main.jinja2')
