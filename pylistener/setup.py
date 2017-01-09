@@ -27,7 +27,8 @@ tests_require = [
 
 setup(name='pylistener',
       version='0.0',
-      description='pylistener',
+      description='''A simple tool designed to enable people with Apraxia
+        to communicate.''',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[
           "Programming Language :: Python",
@@ -35,9 +36,9 @@ setup(name='pylistener',
           "Topic :: Internet :: WWW/HTTP",
           "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
       ],
-      author='',
+      author='Maelle Vance, Rick Valenzuela, Ted Callahan',
       author_email='',
-      url='',
+      url='https://pylistener.herokuapp.com',
       keywords='web wsgi bfg pylons pyramid',
       packages=find_packages(),
       include_package_data=True,
@@ -50,6 +51,6 @@ setup(name='pylistener',
       [paste.app_factory]
       main = pylistener:main
       [console_scripts]
-      initialize_pylistener_db = pylistener.scripts.initializedb:main
+      initialize_db = pylistener.scripts.initializedb:main
       """,
       )
