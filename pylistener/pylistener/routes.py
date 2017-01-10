@@ -8,3 +8,4 @@ def includeme(config):
     config.add_route('categories', '/categories')
     config.add_route('attributes', '/attributes')
     config.add_route('display', '/display')
+    config.add_route('test_img', 'test/{id:\d+}')

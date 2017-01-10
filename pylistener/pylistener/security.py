@@ -25,7 +25,7 @@ def check_credentials(input_password, real_password):
 
 def includeme(config):
     """Pyramid security configuration."""
-    auth_secret = request.dbsession.query(User).get("AUTH_SECRET", "potato")
+    auth_secret = os.environ.get("AUTH_SECRET", "potato")
     authn_policy = AuthTktAuthenticationPolicy(
         secret=auth_secret,
         hashalg="sha512"
