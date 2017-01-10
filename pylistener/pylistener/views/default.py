@@ -7,8 +7,9 @@ from pyramid.httpexceptions import HTTPFound
 
 
 from pylistener.security import check_credentials
+from passlib.apps import custom_app_context as pwd_context
 from pyramid.security import remember, forget
-from pylistener.models import User, AddressBook, Categories, Attributes
+from pylistener.models import User, AddressBook, Category, Attribute
 
 import os
 import shutil
@@ -32,13 +33,13 @@ def login_view(request):
         real_password = None
         for user in query.all():
             if user.username == username:
-                real_password = user.hashed_password
+                real_password = user.password
                 break
         if real_password:
             if check_credentials(password, real_password):
                 auth_head = remember(request, username)
             return HTTPFound(
-                location=request.route_url("home"),
+                location=request.route_url("manage"),
                 headers=auth_head
             )
     return {}
@@ -81,7 +82,7 @@ def manage_view(request):
             label = request.POST["cat_label"]
             cat_desc = request.POST["cat_desc"]
             picture = request.POST["cat_img"].file
-            new_cat = Categories(
+            new_cat = Category(
                 label=label,
                 desc=cat_desc,
                 picture=picture
@@ -92,16 +93,16 @@ def manage_view(request):
             desc = request.POST["attr_descr"]
             category = request.POST["attr_cat"]
             picture = request.POST["cat_img"].file
-            category_id_query = request.dbsession.query(Categories)
+            category_id_query = request.dbsession.query(Category)
             category_id = category_id_query.filter(category.label == category)
-            new_attr = Attributes(
+            new_attr = Attribute(
                 label=label,
                 desc=desc,
                 picture=picture,
                 cat_id=category_id,
             )
             request.dbsession.add(new_attr)
-    query = request.dbsession.query(Categories)
+    query = request.dbsession.query(Category)
     categories = query.all()
     return {"categories": categories}
 
@@ -112,11 +113,9 @@ def register_view(request):
     if request.POST:
         username = request.POST["username"]
         password = request.POST["password"]
-        email = request.POST["email"]
         new_user = User(
             username=username,
-            hashed_password=password.pwd_context.hash(password),
-            email=email
+            password=pwd_context.hash(password),
         )
         request.dbsession.add(new_user)
         return HTTPFound(location=request.route_url('manage', id=new_user.username))
