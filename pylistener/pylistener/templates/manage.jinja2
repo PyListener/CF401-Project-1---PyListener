@@ -5,14 +5,14 @@
     <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
 
     <label for="img">Image</label>
-    <input id="contact_picture" name="contact_picture" type="file" />
+    <input name="contact_picture" type="file" required>
     <label for="contact_name">Name</label>
-    <input id="contact_name" name="contact_name" type="text" />
+    <input id="contact_name" name="contact_name" type="text" required>
     <label for="contact_phone">Phone</label>
-    <input id="contact_phone" name="contact_phone" type="text" />
+    <input name="contact_phone" type="text" >
     <label for="contact_email">Email</label>
-    <input id="contact_email" name="contact_email" type="text" />
-    <input type="submit" value="submit" />
+    <input name="contact_email" type="text" >
+    <input type="submit" value="contact" >
 </form>
 
 <form id="category" method="post" accept-charset="utf-8"
@@ -20,13 +20,13 @@
     <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
 
     <label for="cat_img">Attribute Image</label>
-    <input id="cat_img" name="cat_img" type="file" />
+    <input name="cat_img" type="file" required>
     <label for="cat_label">Name</label>
-    <input id="cat_lab" name="cat_label" type="text" />
+    <input name="cat_label" type="text" required>
     <label for="cat_desc">Description</label>
-    <input id="cat_desc" name="cat_desc" type="text" />
+    <input name="cat_desc" type="text" required>
 
-    <input type="submit" value="submit" />
+    <input type="submit" value="category">
 </form>
 
 <form id="attribute" method="post" accept-charset="utf-8"
@@ -34,16 +34,18 @@
     <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
 
     <label for="attr_img">Attribute Image</label>
-    <input id="attr_img" name="attr_img" type="file" />
-    <label for="attr_name">name</label>
-    <input id="attr_img_name" name="attr_img_name" type="text" />
-    <select id="attr_cat">
+    <input name="attr_img" type="file">
+    <label for="attr_label">Name</label>
+    <input  name="attr_label" type="text">
+    <select name="attr_cat" required>
         {% for category in categories %}
-        <option value="{{category}}">{{category}}</option>
+        <option value="{{category.label}}">{{category.label}}</option>
         {% endfor %}
     </select>
+    <label for="attr_desc"></label>
+    <input name="attr_desc" type="text">
 
-    <input type="submit" value="submit" />
+    <input type="submit" value="attribute">
 </form>
 
 {% endblock %}
