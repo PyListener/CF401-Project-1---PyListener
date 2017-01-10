@@ -1,6 +1,7 @@
 import os
 import sys
 import transaction
+import json
 
 from pyramid.paster import (
     get_appsettings,
@@ -9,13 +10,13 @@ from pyramid.paster import (
 
 from pyramid.scripts.common import parse_vars
 
-from ..models.meta import Base
-from ..models import (
+from pylistener.models.meta import Base
+from pylistener.models import (
     get_engine,
     get_session_factory,
     get_tm_session,
     )
-from ..models import User, AddressBook, Attributes, Categories
+from pylistener.models import User, AddressBook, Attribute, Category
 
 
 def usage(argv):
@@ -37,10 +38,15 @@ def main(argv=sys.argv):
     Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
 
-    # session_factory = get_session_factory(engine)
+    session_factory = get_session_factory(engine)
 
-    # with transaction.manager:
-    #     dbsession = get_tm_session(session_factory, transaction.manager)
+    here = os.path.abspath(os.path.dirname(__file__))
+    with open(os.path.join(here, 'data.json')) as data:
+        json_data = data.read()
+        j_data = json.loads(json_data)
 
-    #     model = MyModel(name='one', value=1)
-    #     dbsession.add(model)
+    with transaction.manager:
+        dbsession = get_tm_session(session_factory, transaction.manager)
+
+        print(j_data)
+

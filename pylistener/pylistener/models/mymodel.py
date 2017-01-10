@@ -36,7 +36,7 @@ class User(Base):
         'AddressBook'
     )
     attr_rel = relationship(
-        'Attributes',
+        'Attribute',
         secondary=user_attributes_link,
         back_populates="user_rel"
     )
@@ -52,17 +52,16 @@ class AddressBook(Base):
     user = Column(Integer, ForeignKey('users.id'))
 
 
-
-class Categories(Base):
+class Category(Base):
     __tablename__ = 'categories'
     id = Column(Integer, primary_key=True)
     label = Column(Unicode)
     desc = Column(Unicode)
     picture = Column(LargeBinary)
-    children = relationship('Attributes')
+    children = relationship('Attribute')
 
 
-class Attributes(Base):
+class Attribute(Base):
     __tablename__ = 'attributes'
     id = Column(Integer, primary_key=True)
     label = Column(Unicode)
