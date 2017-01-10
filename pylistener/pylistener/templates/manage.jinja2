@@ -1,15 +1,18 @@
 {% extends 'layout.jinja2' %}
 {% block body %}
-<form id="contact" method="post" accept-charset="utf-8"
+<form id="address_book" method="post" accept-charset="utf-8"
       enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
 
     <label for="img">Image</label>
-    <input id="img" name="img" type="file" />
-    <label for="img_name">name</label>
-    <input id="img_name" name="img_name" type="text" />
-
-    <input type="submit" value="submit" />
+    <input name="contact_picture" type="file" required>
+    <label for="contact_name">Name</label>
+    <input id="contact_name" name="contact_name" type="text" required>
+    <label for="contact_phone">Phone</label>
+    <input name="contact_phone" type="text" >
+    <label for="contact_email">Email</label>
+    <input name="contact_email" type="text" >
+    <input type="submit" value="contact" >
 </form>
 
 <form id="category" method="post" accept-charset="utf-8"
@@ -17,11 +20,13 @@
     <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
 
     <label for="cat_img">Attribute Image</label>
-    <input id="cat_img" name="cat_img" type="file" />
-    <label for="cat_img_name">name</label>
-    <input id="cat_img_name" name="cat_img_name" type="text" />
+    <input name="cat_img" type="file" required>
+    <label for="cat_label">Name</label>
+    <input name="cat_label" type="text" required>
+    <label for="cat_desc">Description</label>
+    <input name="cat_desc" type="text" required>
 
-    <input type="submit" value="submit" />
+    <input type="submit" value="category">
 </form>
 
 <form id="attribute" method="post" accept-charset="utf-8"
@@ -29,11 +34,18 @@
     <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
 
     <label for="attr_img">Attribute Image</label>
-    <input id="attr_img" name="attr_img" type="file" />
-    <label for="attr_img_name">name</label>
-    <input id="attr_img_name" name="attr_img_name" type="text" />
+    <input name="attr_img" type="file">
+    <label for="attr_label">Name</label>
+    <input  name="attr_label" type="text">
+    <select name="attr_cat" required>
+        {% for category in categories %}
+        <option value="{{category.label}}">{{category.label}}</option>
+        {% endfor %}
+    </select>
+    <label for="attr_desc"></label>
+    <input name="attr_desc" type="text">
 
-    <input type="submit" value="submit" />
+    <input type="submit" value="attribute">
 </form>
 
 {% endblock %}
