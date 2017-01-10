@@ -1,4 +1,39 @@
 {% extends 'layout.jinja2' %}
 {% block body %}
+<form id="contact" method="post" accept-charset="utf-8"
+      enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
+
+    <label for="img">Image</label>
+    <input id="img" name="img" type="file" />
+    <label for="img_name">name</label>
+    <input id="img_name" name="img_name" type="text" />
+
+    <input type="submit" value="submit" />
+</form>
+
+<form id="category" method="post" accept-charset="utf-8"
+      enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
+
+    <label for="cat_img">Attribute Image</label>
+    <input id="cat_img" name="cat_img" type="file" />
+    <label for="cat_img_name">name</label>
+    <input id="cat_img_name" name="cat_img_name" type="text" />
+
+    <input type="submit" value="submit" />
+</form>
+
+<form id="attribute" method="post" accept-charset="utf-8"
+      enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
+
+    <label for="attr_img">Attribute Image</label>
+    <input id="attr_img" name="attr_img" type="file" />
+    <label for="attr_img_name">name</label>
+    <input id="attr_img_name" name="attr_img_name" type="text" />
+
+    <input type="submit" value="submit" />
+</form>
 
 {% endblock %}
