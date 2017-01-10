@@ -30,16 +30,12 @@ def login_view(request):
         query = request.dbsession.query(User)
         username = request.POST["username"]
         password = request.POST["password"]
-        real_password = None
-        for user in query.all():
-            if user.username == username:
-                real_password = user.password
-                break
-        if real_password:
-            if check_credentials(password, real_password):
-                auth_head = remember(request, username)
+        user = query.filter(User.username == username).first()
+        real_password = user.password
+        if check_credentials(password, real_password):
+            auth_head = remember(request, username)
             return HTTPFound(
-                location=request.route_url("manage"),
+                location=request.route_url("manage", id=username),
                 headers=auth_head
             )
     return {}
@@ -61,7 +57,8 @@ def manage_view(request):
             phone = request.POST["contact_phone"]
             email = request.POST["contact_phone"]
             input_file = request.POST['contact_picture'].file
-            temp_file_path = '/'.join([HERE, 'tmp', name, '~'])
+            temp_file_path = '/'.join([HERE, 'tmp', name])
+            temp_file_path += '~'
             input_file.seek(0)
             with open(temp_file_path, 'wb') as output_file:
                 shutil.copyfileobj(input_file, output_file)
@@ -69,19 +66,30 @@ def manage_view(request):
                 blob = f.read()
                 picture = blob
             os.remove(temp_file_path)
-            user = int(request.matchdict["id"])
+            user = request.matchdict["id"]
+            user_id = request.dbsession.query(User).filter(User.username == user).first()
+
             new_contact = AddressBook(
                 name=name,
                 phone=phone,
                 email=email,
                 picture=picture,
-                user=user)
+                user=user_id.id)
             request.dbsession.add(new_contact)
 
         elif request.POST['category']:
             label = request.POST["cat_label"]
             cat_desc = request.POST["cat_desc"]
-            picture = request.POST["cat_img"].file
+            input_file = request.POST['contact_picture'].file
+            temp_file_path = '/'.join([HERE, 'tmp', name])
+            temp_file_path += '~'
+            input_file.seek(0)
+            with open(temp_file_path, 'wb') as output_file:
+                shutil.copyfileobj(input_file, output_file)
+            with open(temp_file_path, 'rb') as f:
+                blob = f.read()
+                picture = blob
+            os.remove(temp_file_path)
             new_cat = Category(
                 label=label,
                 desc=cat_desc,
@@ -92,14 +100,23 @@ def manage_view(request):
             label = request.POST["attr_label"]
             desc = request.POST["attr_descr"]
             category = request.POST["attr_cat"]
-            picture = request.POST["cat_img"].file
-            category_id_query = request.dbsession.query(Category)
-            category_id = category_id_query.filter(category.label == category)
+            input_file = request.POST['contact_picture'].file
+            temp_file_path = '/'.join([HERE, 'tmp', name])
+            temp_file_path += '~'
+            input_file.seek(0)
+            with open(temp_file_path, 'wb') as output_file:
+                shutil.copyfileobj(input_file, output_file)
+            with open(temp_file_path, 'rb') as f:
+                blob = f.read()
+                picture = blob
+            os.remove(temp_file_path)
+            category_query = request.dbsession.query(Category)
+            category_id = category_query.filter(category.label == category).first()
             new_attr = Attribute(
                 label=label,
                 desc=desc,
                 picture=picture,
-                cat_id=category_id,
+                cat_id=category_id.id,
             )
             request.dbsession.add(new_attr)
     query = request.dbsession.query(Category)
