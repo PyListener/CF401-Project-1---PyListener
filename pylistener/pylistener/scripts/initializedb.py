@@ -33,7 +33,7 @@ def main(argv=sys.argv):
     options = parse_vars(argv[2:])
     setup_logging(config_uri)
     settings = get_appsettings(config_uri, options=options)
-
+    settings["sqlalchemy.url"] = os.environ["DATABASE_URL"]
     engine = get_engine(settings)
     Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
@@ -48,5 +48,24 @@ def main(argv=sys.argv):
     with transaction.manager:
         dbsession = get_tm_session(session_factory, transaction.manager)
 
-        print(j_data)
+        for category in j_data:
+            cat_row = Category(
+                label=category["label"],
+                desc=category["desc"],
+            )
+            dbsession.add(cat_row)
+            cat_id_query = dbsession.query(Category)
+            cat_id = cat_id_query.filter(Category.label == category["label"]).first()
+            for attribute in category["attributes"]:
+                attr_row = Attribute(
+                    label=attribute["label"],
+                    desc=attribute["desc"],
+                    cat_id=int(cat_id.id)
+                )
+                dbsession.add(attr_row)
+
+
+
+
+
 
