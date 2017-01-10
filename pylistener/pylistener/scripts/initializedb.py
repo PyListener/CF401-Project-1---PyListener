@@ -16,7 +16,8 @@ from pylistener.models import (
     get_session_factory,
     get_tm_session,
     )
-from pylistener.models import User, AddressBook, Attribute, Category
+from pylistener.models import User, AddressBook, Attribute, Category, UserAttributeLink
+from passlib.apps import custom_app_context as pwd_context
 
 
 def usage(argv):
@@ -48,6 +49,9 @@ def main(argv=sys.argv):
     with transaction.manager:
         dbsession = get_tm_session(session_factory, transaction.manager)
 
+        test_user = User(username="testted", password=pwd_context.hash("password"))
+        dbsession.add(test_user)
+
         for category in j_data:
             cat_row = Category(
                 label=category["label"],
@@ -64,8 +68,12 @@ def main(argv=sys.argv):
                 )
                 dbsession.add(attr_row)
 
+                u_id = dbsession.query(User).first().id
+                attr_id = dbsession.query(Attribute).filter(Attribute.label == attribute["label"]).first().id
 
+                link_row = UserAttributeLink(
+                    user_id=u_id,
+                    attr_id=attr_id
+                )
 
-
-
-
+                dbsession.add(link_row)

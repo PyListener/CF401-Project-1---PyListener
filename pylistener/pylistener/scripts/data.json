@@ -3,10 +3,6 @@
     "desc": "I would like, ",
     "picture": "",
     "attributes": [{
-        "label": "food",
-        "desc": "something to eat.",
-        "picture": ""
-    }, {
         "label": "play",
         "desc": "to play.",
         "picture": ""
@@ -58,10 +54,6 @@
     }, {
         "label": "sleep",
         "desc": "to sleep",
-        "picture": ""
-    }, {
-        "label": "that",
-        "desc": "that thing.",
         "picture": ""
     }, {
         "label": "help",
