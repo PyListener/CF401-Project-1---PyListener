@@ -38,7 +38,6 @@ def main(argv=sys.argv):
     engine = get_engine(settings)
     Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
-
     session_factory = get_session_factory(engine)
 
     here = os.path.abspath(os.path.dirname(__file__))
