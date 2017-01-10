@@ -5,9 +5,11 @@ from sqlalchemy.exc import DBAPIError
 
 from pyramid.httpexceptions import HTTPFound
 
-from pylistener.models import User
+
 from pylistener.security import check_credentials
 from pyramid.security import remember, forget
+from pylistener.models import User, AddressBook, Categories, Attributes
+
 
 
 @view_config(route_name='home', renderer='../templates/main.jinja2')
