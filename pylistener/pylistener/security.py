@@ -5,6 +5,7 @@ from pyramid.security import Allow, Authenticated
 from pyramid.session import SignedCookieSessionFactory
 
 from passlib.apps import custom_app_context as pwd_context
+from .models import User
 
 
 class NewRoot(object):
@@ -13,18 +14,18 @@ class NewRoot(object):
 
     """TODO: create second level of authentication?"""
     __acl__ = [
-        (Allow, Authenticated, 'guardian'),
+        (Allow, Authenticated, 'manage'),
     ]
 
 
-def check_credentials(request):
-    """Return True if correct username and password, else False."""
-    pass
+def check_credentials(input_password, real_password):
+    """Return True if correct password, else False."""
+    return pwd_context.verify(input_password, real_password)
 
 
 def includeme(config):
     """Pyramid security configuration."""
-    auth_secret = os.environ.get("AUTH_SECRET", "potato")
+    auth_secret = request.dbsession.query(User).get("AUTH_SECRET", "potato")
     authn_policy = AuthTktAuthenticationPolicy(
         secret=auth_secret,
         hashalg="sha512"
