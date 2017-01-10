@@ -3,7 +3,7 @@ from pyramid.view import view_config
 
 from sqlalchemy.exc import DBAPIError
 
-from ..models import MyModel
+from ..models import User, AddressBook, Categories, Attributes
 
 
 @view_config(route_name='home', renderer='../templates/main.jinja2')
