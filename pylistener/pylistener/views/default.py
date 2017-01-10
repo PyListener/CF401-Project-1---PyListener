@@ -57,7 +57,7 @@ def manage_view(request):
             phone = request.POST["contact_phone"]
             email = request.POST["contact_phone"]
             input_file = request.POST['contact_picture'].file
-            temp_file_path = '/'.join([HERE, 'tmp', name])
+            temp_file_path = '/'.join([HERE, name])
             temp_file_path += '~'
             input_file.seek(0)
             with open(temp_file_path, 'wb') as output_file:
@@ -81,7 +81,7 @@ def manage_view(request):
             label = request.POST["cat_label"]
             cat_desc = request.POST["cat_desc"]
             input_file = request.POST['contact_picture'].file
-            temp_file_path = '/'.join([HERE, 'tmp', name])
+            temp_file_path = '/'.join([HERE, name])
             temp_file_path += '~'
             input_file.seek(0)
             with open(temp_file_path, 'wb') as output_file:
@@ -101,7 +101,7 @@ def manage_view(request):
             desc = request.POST["attr_descr"]
             category = request.POST["attr_cat"]
             input_file = request.POST['contact_picture'].file
-            temp_file_path = '/'.join([HERE, 'tmp', name])
+            temp_file_path = '/'.join([HERE, name])
             temp_file_path += '~'
             input_file.seek(0)
             with open(temp_file_path, 'wb') as output_file:
