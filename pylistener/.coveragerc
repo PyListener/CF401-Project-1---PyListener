@@ -1,0 +1,3 @@
+[run]
+source = pylistener
+omit = pylistener/test*

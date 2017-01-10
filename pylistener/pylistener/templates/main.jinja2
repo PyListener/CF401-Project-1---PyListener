@@ -1,0 +1,14 @@
+{% extends 'layout.jinja2' %}
+{% block body %}
+{% if request.authenticated_userid %}
+    <ul>
+  { for contact in contacts }
+    <li><img href="{{ contact.file_path }}"></li>
+
+{% else %}
+  <a href="{{ request.route_url('login')}}">Log In</a>
+  <a href="{{ request.route_url('register')}}">Register</a>
+
+  <p>You are not authenticated.</p>
+
+{% endblock %}
