@@ -9,8 +9,10 @@ from pyramid.httpexceptions import HTTPFound
 from pylistener.security import check_credentials
 from passlib.apps import custom_app_context as pwd_context
 from pyramid.security import remember, forget
+
 from pylistener.models import User, AddressBook, Category, Attribute
 from pylistener.scripts.pytextbelt import Textbelt
+
 import os
 import shutil
 import yagmail
@@ -148,17 +150,25 @@ def register_view(request):
     return {}
 
 
-@view_config(route_name='category', renderer='../templates/main.jinja2')
+@view_config(route_name='category', renderer='../templates/categories.jinja2')
 def categories_view(request):
     """Handle the categories route."""
-    pass
+    if request.authenticated_userid:
+        user = request.authenticated_userid
+        categories = request.dbsession.query(Category).all()
+        return {"categories": categories, "addr_id": request.matchdict["add_id"]}
+    return {}
 
 
-@view_config(route_name='attribute', renderer='../templates/main.jinja2')
+
+@view_config(route_name='attribute', renderer='../templates/attributes.jinja2')
 def attributes_view(request):
     """Handle the attributes route."""
-    pass
-
+    if request.authenticated_userid:
+        user_id = request.dbsession.query(User).filter(User.username == request.authenticated_userid).first()
+        attributes = request.dbsession.query(Attribute).all()
+        return {"attributes": attributes, "addr_id": request.matchdict["add_id"], "category_id": request.matchdict["cat_id"]}
+    return {}
 
 @view_config(route_name='display', renderer='../templates/display.jinja2')
 def display_view(request):
@@ -189,6 +199,10 @@ def picture_handler(request):
     """Serve pictures from database binaries."""
     if request.matchdict["db_id"] == "add":
         picture_data = request.dbsession.query(AddressBook).get(request.matchdict['pic_id']).picture
+    elif request.matchdict["db_id"] == "cat":
+        picture_data = request.dbsession.query(Category).get(request.matchdict['pic_id']).picture
+    elif request.matchdict["db_id"] == "att":
+        picture_data = request.dbsession.query(Attribute).get(request.matchdict['pic_id']).picture
     return Response(content_type="image/jpg", body=picture_data)
 
 

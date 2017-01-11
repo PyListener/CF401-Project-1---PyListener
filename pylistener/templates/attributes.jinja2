@@ -1,0 +1,23 @@
+{% extends 'layout.jinja2' %}
+{% block content %}
+{% if request.authenticated_userid %}
+    <ul>
+        {% for attribute in attributes %}
+        <li>
+            <a href="{{request.route_url('display', add_id=addr_id, cat_id=category_id, att_id=attribute.id) }}">
+                <img src="{{ request.route_url('picture', db_id='att', pic_id=attribute.id) }}">
+                <p>{{ attribute.label }}</p>
+
+                <hr>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+{% else %}
+  <a href="{{ request.route_url('login')}}">Log In</a>
+  <a href="{{ request.route_url('register')}}">Register</a>
+
+  <p>You are not authenticated.</p>
+{% endif %}
+
+{% endblock %}
