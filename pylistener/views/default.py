@@ -143,13 +143,13 @@ def register_view(request):
     return {}
 
 
-@view_config(route_name='category', renderer='../templates/main.jinja2')
+@view_config(route_name='category', renderer='../templates/categories.jinja2')
 def categories_view(request):
     """Handle the categories route."""
     pass
 
 
-@view_config(route_name='attribute', renderer='../templates/main.jinja2')
+@view_config(route_name='attribute', renderer='../templates/attributes.jinja2')
 def attributes_view(request):
     """Handle the attributes route."""
     pass
@@ -166,6 +166,10 @@ def picture_handler(request):
     """Serve pictures from database binaries."""
     if request.matchdict["db_id"] == "add":
         picture_data = request.dbsession.query(AddressBook).get(request.matchdict['pic_id']).picture
+    elif request.matchdict["db_id"] == "cat":
+        picture_data = request.dbsession.query(Category).get(request.matchdict['pic_id']).picture
+    elif request.matchdict["db_id"] == "att":
+        picture_data = request.dbsession.query(Attribute).get(request.matchdict['pic_id']).picture
     return Response(content_type="image/jpg", body=picture_data)
 
 
