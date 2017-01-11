@@ -53,23 +53,35 @@ def main(argv=sys.argv):
         dbsession = get_tm_session(session_factory, transaction.manager)
 
         test_user = User(username="testted", password=pwd_context.hash("password"))
+        test_user2 = User(username="Nurse Jackie", password=pwd_context.hash("password1234"))
         dbsession.add(test_user)
+        dbsession.add(test_user2)
 
         u_id = dbsession.query(User).first().id
-        for person in j_test_contacts:
+        u_id2 = dbsession.query(User).filter(User.username == "Nurse Jackie").id
+        for i in range(3):
             add_row = AddressBook(
-                name=person["name"],
-                phone=person["phone"],
-                email=person["email"],
+                name=j_test_contacts[i]["name"],
+                phone=j_test_contacts[i]["phone"],
+                email=j_test_contacts[i]["email"],
                 user=u_id,
-                picture=get_picture_binary(os.path.join(here, person["picture"]))
+                picture=get_picture_binary(os.path.join(here, j_test_contacts[i]["picture"]))
+            )
+            add_row2 = AddressBook(
+                name=j_test_contacts[i + 3]["name"],
+                phone=j_test_contacts[i + 3]["phone"],
+                email=j_test_contacts[i + 3]["email"],
+                user=u_id2,
+                picture=get_picture_binary(os.path.join(here, j_test_contacts[i + 3]["picture"]))
             )
             dbsession.add(add_row)
+            dbsession.add(add_row2)
 
         for category in j_data:
             cat_row = Category(
                 label=category["label"],
                 desc=category["desc"],
+                picture=get_picture_binary(os.path.join(here, category["picture"]))
             )
             dbsession.add(cat_row)
             cat_id_query = dbsession.query(Category)
@@ -78,19 +90,23 @@ def main(argv=sys.argv):
                 attr_row = Attribute(
                     label=attribute["label"],
                     desc=attribute["desc"],
-                    cat_id=int(cat_id.id)
+                    cat_id=int(cat_id.id),
+                    picture=get_picture_binary(os.path.join(here, attribute["picture"]))
                 )
                 dbsession.add(attr_row)
 
-                u_id = dbsession.query(User).first().id
                 attr_id = dbsession.query(Attribute).filter(Attribute.label == attribute["label"]).first().id
 
                 link_row = UserAttributeLink(
                     user_id=u_id,
                     attr_id=attr_id
                 )
-
+                link_row2 = UserAttributeLink(
+                    user_id=u_id2,
+                    attr_id=attr_id
+                )
                 dbsession.add(link_row)
+                dbsession.add(link_row2)
 
 
 def get_picture_binary(path):
