@@ -168,7 +168,7 @@ def display_view(request):
     category = request.dbsession.query(Category).filter(Category.id == cat_id).first() 
     att_id = request.matchdict["att_id"]
     attribute = request.dbsession.query(Attribute).filter(Attribute.id == att_id).first()
-    content = contact.name + category.desc + attribute.desc
+    content = category.desc + attribute.desc
     if request.POST:
         try:
             if request.POST['email']:
