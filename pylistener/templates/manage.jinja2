@@ -5,7 +5,7 @@
     <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
 
     <label for="img">Image</label>
-    <input name="contact_picture" type="file" required>
+    <input name="contact_img" type="file" required>
     <label for="contact_name">Name</label>
     <input id="contact_name" name="contact_name" type="text" required>
     <label for="contact_phone">Phone</label>
@@ -19,7 +19,7 @@
       enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
 
-    <label for="cat_img">Attribute Image</label>
+    <label for="cat_img">Category Image</label>
     <input name="cat_img" type="file" required>
     <label for="cat_label">Name</label>
     <input name="cat_label" type="text" required>
