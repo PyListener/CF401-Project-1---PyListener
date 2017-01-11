@@ -9,7 +9,7 @@ from pyramid.httpexceptions import HTTPFound
 from pylistener.security import check_credentials
 from passlib.apps import custom_app_context as pwd_context
 from pyramid.security import remember, forget
-from pylistener.models import User, AddressBook, Category, Attribute
+from pylistener.models import User, AddressBook, Category, Attribute, UserAttributeLink
 
 import os
 import shutil
@@ -146,14 +146,22 @@ def register_view(request):
 @view_config(route_name='category', renderer='../templates/categories.jinja2')
 def categories_view(request):
     """Handle the categories route."""
-    pass
+    if request.authenticated_userid:
+        user = request.authenticated_userid
+        categories = request.dbsession.query(Category).all()
+        return {"categories": categories, "addr_id": request.matchdict["add_id"]}
+    return {}
+
 
 
 @view_config(route_name='attribute', renderer='../templates/attributes.jinja2')
 def attributes_view(request):
     """Handle the attributes route."""
-    pass
-
+    if request.authenticated_userid:
+        user_id = request.dbsession.query(User).filter(User.username == request.authenticated_userid).first()
+        attributes = request.dbsession.query(Attribute).all()
+        return {"attributes": attributes, "addr_id": request.matchdict["add_id"], "category_id": request.matchdict["cat_id"]}
+    return {}
 
 @view_config(route_name='display', renderer='../templates/display.jinja2')
 def display_view(request):
