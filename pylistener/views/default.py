@@ -9,10 +9,14 @@ from pyramid.httpexceptions import HTTPFound
 from pylistener.security import check_credentials
 from passlib.apps import custom_app_context as pwd_context
 from pyramid.security import remember, forget
+
 from pylistener.models import User, AddressBook, Category, Attribute
+from pylistener.scripts.pytextbelt import Textbelt
 
 import os
 import shutil
+import yagmail
+
 
 
 HERE = os.path.dirname(os.path.realpath(__file__))
@@ -57,73 +61,76 @@ def logout_view(request):
 def manage_view(request):
     """Manage user uploads."""
     if request.POST:
-        if request.POST['contact']:
-            name = request.POST["contact_name"]
-            phone = request.POST["contact_phone"]
-            email = request.POST["contact_phone"]
-            input_file = request.POST['contact_picture'].file
-            temp_file_path = '/'.join([HERE, name])
-            temp_file_path += '~'
-            input_file.seek(0)
-            with open(temp_file_path, 'wb') as output_file:
-                shutil.copyfileobj(input_file, output_file)
-            with open(temp_file_path, 'rb') as f:
-                blob = f.read()
-                picture = blob
-            os.remove(temp_file_path)
-            user = request.matchdict["id"]
-            user_id = request.dbsession.query(User).filter(User.username == user).first()
+        try:
+            if request.POST['contact']:
+                name = request.POST["contact_name"]
+                phone = request.POST["contact_phone"]
+                email = request.POST["contact_phone"]
+                input_file = request.POST['contact_img'].file
+                temp_file_path = '/'.join([HERE, name])
+                temp_file_path += '~'
+                input_file.seek(0)
+                with open(temp_file_path, 'wb') as output_file:
+                    shutil.copyfileobj(input_file, output_file)
+                with open(temp_file_path, 'rb') as f:
+                    blob = f.read()
+                    picture = blob
+                os.remove(temp_file_path)
+                user = request.matchdict["id"]
+                user_id = request.dbsession.query(User).filter(User.username == user).first()
 
-            new_contact = AddressBook(
-                name=name,
-                phone=phone,
-                email=email,
-                picture=picture,
-                user=user_id.id)
-            request.dbsession.add(new_contact)
-
-        elif request.POST['category']:
-            label = request.POST["cat_label"]
-            cat_desc = request.POST["cat_desc"]
-            input_file = request.POST['contact_picture'].file
-            temp_file_path = '/'.join([HERE, name])
-            temp_file_path += '~'
-            input_file.seek(0)
-            with open(temp_file_path, 'wb') as output_file:
-                shutil.copyfileobj(input_file, output_file)
-            with open(temp_file_path, 'rb') as f:
-                blob = f.read()
-                picture = blob
-            os.remove(temp_file_path)
-            new_cat = Category(
-                label=label,
-                desc=cat_desc,
-                picture=picture
-            )
-            request.dbsession.add(new_cat)
-        elif request.POST['attribute']:
-            label = request.POST["attr_label"]
-            desc = request.POST["attr_descr"]
-            category = request.POST["attr_cat"]
-            input_file = request.POST['contact_picture'].file
-            temp_file_path = '/'.join([HERE, name])
-            temp_file_path += '~'
-            input_file.seek(0)
-            with open(temp_file_path, 'wb') as output_file:
-                shutil.copyfileobj(input_file, output_file)
-            with open(temp_file_path, 'rb') as f:
-                blob = f.read()
-                picture = blob
-            os.remove(temp_file_path)
-            category_query = request.dbsession.query(Category)
-            category_id = category_query.filter(category.label == category).first()
-            new_attr = Attribute(
-                label=label,
-                desc=desc,
-                picture=picture,
-                cat_id=category_id.id,
-            )
-            request.dbsession.add(new_attr)
+                new_contact = AddressBook(
+                    name=name,
+                    phone=phone,
+                    email=email,
+                    picture=picture,
+                    user=user_id.id)
+                request.dbsession.add(new_contact)
+        except KeyError:
+            try:
+                if request.POST['category']:
+                    label = request.POST["cat_label"]
+                    cat_desc = request.POST["cat_desc"]
+                    input_file = request.POST['cat_img'].file
+                    temp_file_path = '/'.join([HERE, label])
+                    temp_file_path += '~'
+                    input_file.seek(0)
+                    with open(temp_file_path, 'wb') as output_file:
+                        shutil.copyfileobj(input_file, output_file)
+                    with open(temp_file_path, 'rb') as f:
+                        blob = f.read()
+                        picture = blob
+                    os.remove(temp_file_path)
+                    new_cat = Category(
+                        label=label,
+                        desc=cat_desc,
+                        picture=picture
+                    )
+                    request.dbsession.add(new_cat)
+            except KeyError:
+                if request.POST['attribute']:
+                    label = request.POST["attr_label"]
+                    desc = request.POST["attr_desc"]
+                    category = request.POST["attr_cat"]
+                    input_file = request.POST['attr_img'].file
+                    temp_file_path = '/'.join([HERE, label])
+                    temp_file_path += '~'
+                    input_file.seek(0)
+                    with open(temp_file_path, 'wb') as output_file:
+                        shutil.copyfileobj(input_file, output_file)
+                    with open(temp_file_path, 'rb') as f:
+                        blob = f.read()
+                        picture = blob
+                    os.remove(temp_file_path)
+                    category_query = request.dbsession.query(Category)
+                    category_id = category_query.filter(Category.label == category).first()
+                    new_attr = Attribute(
+                        label=label,
+                        desc=desc,
+                        picture=picture,
+                        cat_id=category_id.id,
+                    )
+                    request.dbsession.add(new_attr)
     query = request.dbsession.query(Category)
     categories = query.all()
     return {"categories": categories}
@@ -144,22 +151,48 @@ def register_view(request):
     return {}
 
 
-@view_config(route_name='category', renderer='../templates/main.jinja2')
+@view_config(route_name='category', renderer='../templates/categories.jinja2')
 def categories_view(request):
     """Handle the categories route."""
-    pass
+    if request.authenticated_userid:
+        user = request.authenticated_userid
+        categories = request.dbsession.query(Category).all()
+        return {"categories": categories, "addr_id": request.matchdict["add_id"]}
+    return {}
 
 
-@view_config(route_name='attribute', renderer='../templates/main.jinja2')
+
+@view_config(route_name='attribute', renderer='../templates/attributes.jinja2')
 def attributes_view(request):
     """Handle the attributes route."""
-    pass
-
+    if request.authenticated_userid:
+        user_id = request.dbsession.query(User).filter(User.username == request.authenticated_userid).first()
+        attributes = request.dbsession.query(Attribute).filter(Attribute.cat_id == request.matchdict["cat_id"]).all()
+        return {"attributes": attributes, "addr_id": request.matchdict["add_id"], "category_id": request.matchdict["cat_id"]}
+    return {}
 
 @view_config(route_name='display', renderer='../templates/display.jinja2')
 def display_view(request):
-    """Handle the display route."""
-    pass
+    contact_id = request.matchdict["add_id"]
+    contact = request.dbsession.query(AddressBook).filter(AddressBook.id == contact_id).first() 
+    cat_id = request.matchdict["cat_id"]
+    category = request.dbsession.query(Category).filter(Category.id == cat_id).first() 
+    att_id = request.matchdict["att_id"]
+    attribute = request.dbsession.query(Attribute).filter(Attribute.id == att_id).first()
+    content = category.desc + attribute.desc
+    if request.POST:
+        try:
+            if request.POST['email']:
+                yag = yagmail.SMTP(os.environ['EMAIL'], os.environ['PASSWORD'])
+                print(contact.email)
+                yag.send("maellevance@gmail.com", 'An email from Pylistener', content)
+                return HTTPFound(location=request.route_url('home'))
+        except KeyError:
+            if request.POST['sms']:
+                Recipient = Textbelt.Recipient('2066817287', "us")
+                print(contact.phone)
+                Recipient.send(content)
+    return {"content": content}
 
 
 @view_config(route_name='picture')
@@ -167,6 +200,10 @@ def picture_handler(request):
     """Serve pictures from database binaries."""
     if request.matchdict["db_id"] == "add":
         picture_data = request.dbsession.query(AddressBook).get(request.matchdict['pic_id']).picture
+    elif request.matchdict["db_id"] == "cat":
+        picture_data = request.dbsession.query(Category).get(request.matchdict['pic_id']).picture
+    elif request.matchdict["db_id"] == "att":
+        picture_data = request.dbsession.query(Attribute).get(request.matchdict['pic_id']).picture
     return Response(content_type="image/jpg", body=picture_data)
 
 
