@@ -1,1 +1,1 @@
-web: ./pylistener/run
+web: ./run
