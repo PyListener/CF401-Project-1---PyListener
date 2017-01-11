@@ -98,6 +98,8 @@ def get_picture_binary(path):
     with open(path, "rb") as pic_data:
         return pic_data.read()
 
+if __name__ == "__main__":
+    main()
 
 
 
