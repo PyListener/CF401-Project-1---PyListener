@@ -53,6 +53,6 @@ setup(name='pylistener',
       [paste.app_factory]
       main = pylistener:main
       [console_scripts]
-      initialize_db = pylistener.scripts.initializedb:main
+      initialize_db = pylistener.pylistener.scripts.initializedb:main
       """,
       )
