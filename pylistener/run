@@ -2,5 +2,5 @@
 set -e
 python ./pylistener/setup.py develop
 # initialize_db ./pylistener/production.ini
-python ./pylistener/initializedb.py production.ini
+python ./pylistener/pylistener/scripts/initializedb.py ./pylistener/production.ini
 python ./pylistener/runapp.py
