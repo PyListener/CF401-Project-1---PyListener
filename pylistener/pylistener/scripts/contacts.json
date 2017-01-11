@@ -1,0 +1,20 @@
+[
+    {
+        "name": "Joe Schmoe",
+        "phone": "(555) 555-5555",
+        "email": "oops@whoops.com",
+        "picture": ""
+    },
+    {
+        "name": "Danny Devito",
+        "phone": "(555) 555-5556",
+        "email": "short@loud.com",
+        "picture": ""
+    },
+    {
+        "name": "Mary Poppins",
+        "phone": "+44 303 123 7300",
+        "email": "antiquated@adventure.com",
+        "picture": ""
+    }
+]

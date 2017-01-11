@@ -2,13 +2,21 @@
 {% block body %}
 {% if request.authenticated_userid %}
     <ul>
-  { for contact in contacts }
-    <li><img href="{{ contact.file_path }}"></li>
+  {% for contact in contacts %}
+    <li>
+        <a href=""
+            data-add="LOOK FOR ME"
+            data-cat=""
+            data-att="">
+            <img src="">
 
+    </li>
+  {% endfor %}
 {% else %}
   <a href="{{ request.route_url('login')}}">Log In</a>
   <a href="{{ request.route_url('register')}}">Register</a>
 
   <p>You are not authenticated.</p>
+{% endif %}
 
 {% endblock %}
