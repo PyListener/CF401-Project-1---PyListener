@@ -58,7 +58,7 @@ def main(argv=sys.argv):
         dbsession.add(test_user2)
 
         u_id = dbsession.query(User).first().id
-        u_id2 = dbsession.query(User).filter(User.username == "Nurse Jackie").id
+        u_id2 = dbsession.query(User).filter(User.username == "Nurse Jackie").first().id
         for i in range(3):
             add_row = create_address_object(
                 j_test_contacts[i]["name"],
@@ -90,11 +90,10 @@ def main(argv=sys.argv):
                 attr_row = create_att_object(
                     attribute["label"],
                     attribute["desc"],
-                    int(cat_id.id),
-                    get_picture_binary(os.path.join(here, attribute["picture"]))
+                    get_picture_binary(os.path.join(here, attribute["picture"])),
+                    cat_id.id
                 )
                 dbsession.add(attr_row)
-
                 attr_id = dbsession.query(Attribute).filter(Attribute.label == attribute["label"]).first().id
 
                 link_row = create_user_att_link_object(u_id, attr_id)
@@ -118,13 +117,13 @@ def create_cat_object(lbl, des, pic):
     )
 
 
-def create_att_object(lbl, des, pic, u_id):
+def create_att_object(lbl, des, pic, c_id):
     """Return an Attribute object with given information."""
     return Attribute(
         label=lbl,
         desc=des,
         picture=pic,
-        user=u_id
+        cat_id=c_id
     )
 
 
@@ -151,5 +150,5 @@ def create_user_att_link_object(u, att):
     """Return a UserAttributeLink object with given information."""
     return UserAttributeLink(
         user_id=u,
-        att_id=att
+        attr_id=att
     )
