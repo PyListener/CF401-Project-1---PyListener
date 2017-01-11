@@ -13,6 +13,7 @@ from sqlalchemy.orm import relationship
 from .meta import Base
 
 class User(Base):
+    """This class defines a User model."""
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
     username = Column(Unicode, unique=True)
