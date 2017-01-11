@@ -45,11 +45,26 @@ def main(argv=sys.argv):
         json_data = data.read()
         j_data = json.loads(json_data)
 
+    with open(os.path.join(here, 'contacts.json')) as contacts:
+        test_contacts = contacts.read()
+        j_test_contacts = json.loads(test_contacts)
+
     with transaction.manager:
         dbsession = get_tm_session(session_factory, transaction.manager)
 
         test_user = User(username="testted", password=pwd_context.hash("password"))
         dbsession.add(test_user)
+
+        u_id = dbsession.query(User).first().id
+        for person in j_test_contacts:
+            add_row = AddressBook(
+                name=person["name"],
+                phone=person["phone"],
+                email=person["email"],
+                user=u_id,
+                picture=get_picture_binary(os.path.join(here, person["picture"]))
+            )
+            dbsession.add(add_row)
 
         for category in j_data:
             cat_row = Category(
@@ -76,3 +91,10 @@ def main(argv=sys.argv):
                 )
 
                 dbsession.add(link_row)
+
+
+def get_picture_binary(path):
+    """Open an image to save binary data."""
+    with open(path, "rb") as pic_data:
+        return pic_data.read()
+

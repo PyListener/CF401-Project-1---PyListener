@@ -18,8 +18,12 @@ import shutil
 HERE = os.path.dirname(os.path.realpath(__file__))
 
 
-@view_config(route_name='home', renderer='../templates/main.jinja2')
+@view_config(route_name='home', renderer='../templates/home.jinja2')
 def home_view(request):
+    if request.authenticated_userid:
+        user = request.authenticated_userid
+        contacts = request.dbsession.query(AddressBook).join(User.address_rel).filter(User.username == user).all()
+        return {"contacts": contacts}
     return {}
 
 
@@ -140,13 +144,13 @@ def register_view(request):
     return {}
 
 
-@view_config(route_name='categories', renderer='../templates/main.jinja2')
+@view_config(route_name='category', renderer='../templates/main.jinja2')
 def categories_view(request):
     """Handle the categories route."""
     pass
 
 
-@view_config(route_name='attributes', renderer='../templates/main.jinja2')
+@view_config(route_name='attribute', renderer='../templates/main.jinja2')
 def attributes_view(request):
     """Handle the attributes route."""
     pass
@@ -156,6 +160,16 @@ def attributes_view(request):
 def display_view(request):
     """Handle the display route."""
     pass
+
+
+@view_config(route_name='picture')
+def picture_handler(request):
+    """Serve pictures from database binaries."""
+    if request.matchdict["db_id"] == "add":
+        picture_data = request.dbsession.query(AddressBook).get(request.matchdict['pic_id']).picture
+    return Response(content_type="image/jpg", body=picture_data)
+
+
 
 
 db_err_msg = """\
