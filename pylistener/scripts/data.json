@@ -1,7 +1,7 @@
 [{
     "label": "wants",
     "desc": "I would like, ",
-    "picture": "",
+    "picture": "img_wants/want.jpg",
     "attributes": [{
         "label": "play",
         "desc": "to play.",
@@ -29,12 +29,24 @@
     }, {
         "label": "that",
         "desc": "that thing.",
-        "picture": ""
+        "picture": "img_wants/that_finger.jpg"
+    }, {
+        "label": "wine",
+        "desc": "some wine.",
+        "picture": "img_wants/wine.jpg"
+    }, {
+        "label": "music",
+        "desc": "to listen to music.",
+        "picture": "img_wants/music.jpg"
+    }, {
+        "label": "clothes",
+        "desc": "a change of clothes.",
+        "picture": "img_wants/clothes.jpg"
     }]
 }, {
     "label": "needs",
     "desc": "I need, ",
-    "picture": "",
+    "picture": "img_needs/need.jpg",
     "attributes": [{
         "label": "food",
         "desc": "something to eat.",
@@ -46,7 +58,7 @@
     }, {
         "label": "medicine",
         "desc": "my medicine.",
-        "picture": ""
+        "picture": "img_needs/medicine.jpg"
     }, {
         "label": "restroom",
         "desc": "to use the restroom",
@@ -54,16 +66,16 @@
     }, {
         "label": "sleep",
         "desc": "to sleep",
-        "picture": ""
+        "picture": "img_needs/bed.jpg"
     }, {
         "label": "help",
         "desc": "help.",
-        "picture": ""
+        "picture": "img_needs/doctor.jpg"
     }]
 }, {
     "label": "emotions",
     "desc": "I feel, ",
-    "picture": "",
+    "picture": "img_emotions/emotions.jpg",
     "attributes": [{
         "label": "happy",
         "desc": "happy.",
@@ -75,7 +87,7 @@
     }, {
         "label": "lonely",
         "desc": "lonely",
-        "picture": ""
+        "picture": "img_emotions/bored_lonely.jpg"
     }, {
         "label": "mad",
         "desc": "mad.",
@@ -97,7 +109,7 @@
 }, {
     "label": "tell",
     "desc": "",
-    "picture": "",
+    "picture": "img_tell/tell.jpg",
     "attributes": [{
         "label": "thank you",
         "desc": "thank you.",
@@ -110,10 +122,6 @@
         "label": "stop",
         "desc": "please stop.",
         "picture": "img_tell/no_forbidden_circle_slash.jpg"
-    }, {
-        "label": "continue",
-        "desc": "please continue.",
-        "picture": ""
     }, {
         "label": "yes",
         "desc": "yes.",
@@ -129,27 +137,27 @@
     }]
 }, {
     "label": "questions",
-    "desc": "",
-    "picture": "",
+    "desc": "questions",
+    "picture": "img_questions/question.jpg",
     "attributes": [{
         "label": "why",
         "desc": "why?",
-        "picture": ""
+        "picture": "img_questions/why.jpg"
     }, {
         "label": "how",
         "desc": "how?",
-        "picture": ""
+        "picture": "img_questions/how.jpg"
     }, {
         "label": "when",
         "desc": "when?",
-        "picture": ""
+        "picture": "img_questions/when.jpg"
     }, {
         "label": "who",
         "desc": "who?",
-        "picture": ""
+        "picture": "img_questions/who.jpg"
     }, {
         "label": "what",
-        "desc": "what?",
-        "picture": ""
+        "desc": "WAT?",
+        "picture": "img_questions/what.jpg"
     }]
 }]
