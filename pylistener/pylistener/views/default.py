@@ -161,6 +161,16 @@ def display_view(request):
     pass
 
 
+@view_config(route_name='picture')
+def picture_handler(request):
+    """Serve pictures from database binaries."""
+    if request.matchdict["db_id"] == "add":
+        picture_data = request.dbsession.query(AddressBook).get(request.matchdict['pic_id']).picture
+    return Response(content_type="image/jpg", body=picture_data)
+
+
+
+
 db_err_msg = """\
 Pyramid is having a problem using your SQL database.  The problem
 might be caused by one of the following things:

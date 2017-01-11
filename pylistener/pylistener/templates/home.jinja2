@@ -4,7 +4,7 @@
     <ul>
         {% for contact in contacts %}
         <li>
-            <a href="{{request.route_url('category', add_id=contact.id)}}"
+            <a href="{{request.route_url('category', add_id=contact.id)}}">
                 <img src="{{ request.route_url('picture', db_id='add', pic_id=contact.id) }}">
                 <p>{{ contact.name }}</p>
                 <p>{{ contact.phone }}</p>
