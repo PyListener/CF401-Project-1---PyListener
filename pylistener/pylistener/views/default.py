@@ -31,13 +31,14 @@ def login_view(request):
         username = request.POST["username"]
         password = request.POST["password"]
         user = query.filter(User.username == username).first()
-        real_password = user.password
-        if check_credentials(password, real_password):
-            auth_head = remember(request, username)
-            return HTTPFound(
-                location=request.route_url("manage", id=username),
-                headers=auth_head
-            )
+        if user:
+            real_password = user.password
+            if check_credentials(password, real_password):
+                auth_head = remember(request, username)
+                return HTTPFound(
+                    location=request.route_url("manage", id=username),
+                    headers=auth_head
+                )
     return {}
 
 

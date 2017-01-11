@@ -1,72 +1,80 @@
-# """A short testing suite for the expense tracker."""
+"""Test for Pylistener."""
 
 
-# import pytest
-# import transaction
+import pytest
+import transaction
 
-# from pyramid import testing
+from pyramid import testing
 
-# from pylistener.models import User, AddressBook, Categories, Attributes, get_tm_session
-# from pylistener.models.meta import Base
+from pylistener.models import User, AddressBook, Category, Attribute, get_tm_session
+from pylistener.models.meta import Base
+from passlib.apps import custom_app_context as pwd_context
 
 
-# @pytest.fixture(scope="session")
-# def configuration(request):
-#     """Set up a Configurator instance.
 
-#     This Configurator instance sets up a pointer to the location of the
-#         database.
-#     It also includes the models from your app's model package.
-#     Finally it tears everything down, including the in-memory SQLite database.
+@pytest.fixture(scope="session")
+def configuration(request):
+    """Set up a Configurator instance.
 
-#     This configuration will persist for the entire duration of your PyTest run.
-#     """
-#     settings = {
-#         'sqlalchemy.url': 'postgres:///test_pylistener'}
-#     config = testing.setUp(settings=settings)
-#     config.include('pylistener.models')
-#     config.include('pylistener.routes')
+    This Configurator instance sets up a pointer to the location of the
+        database.
+    It also includes the models from your app's model package.
+    Finally it tears everything down, including the in-memory SQLite database.
 
-#     def teardown():
-#         testing.tearDown()
+    This configuration will persist for the entire duration of your PyTest run.
+    """
+    settings = {
+        'sqlalchemy.url': 'postgres://maellevance:password@localhost:5432/test_pylistener'}
+    config = testing.setUp(settings=settings)
+    config.include('pylistener.models')
+    config.include('pylistener.routes')
 
-#     request.addfinalizer(teardown)
-#     return config
+    def teardown():
+        testing.tearDown()
 
+    request.addfinalizer(teardown)
+    return config
+
+
+@pytest.fixture
+def db_session(configuration, request):
+    """Create a session for interacting with the test database.
+
+    This uses the dbsession_factory on the configurator instance to create a
+    new database session. It binds that session to the available engine
+    and returns a new session for every call of the dummy_request object.
+    """
+    SessionFactory = configuration.registry['dbsession_factory']
+    session = SessionFactory()
+    engine = session.bind
+    Base.metadata.create_all(engine)
+
+    def teardown():
+        session.transaction.rollback()
+        Base.metadata.drop_all(engine)
+
+    request.addfinalizer(teardown)
+    return session
+
+
+@pytest.fixture
+def dummy_request(db_session):
+    """Instantiate a fake HTTP Request, complete with a database session.
+
+    This is a function-level fixture, so every new request will have a
+    new database session.
+    """
+    return testing.DummyRequest(dbsession=db_session)
+
+
+@pytest.fixture
+def test_user(db_session):
+    """Instantiate a test user account."""
+    new_user = User(username="test", password=pwd_context.hash("test"))
+    db_session.add(new_user)
 
 # @pytest.fixture
-# def db_session(configuration, request):
-#     """Create a session for interacting with the test database.
-
-#     This uses the dbsession_factory on the configurator instance to create a
-#     new database session. It binds that session to the available engine
-#     and returns a new session for every call of the dummy_request object.
-#     """
-#     SessionFactory = configuration.registry['dbsession_factory']
-#     session = SessionFactory()
-#     engine = session.bind
-#     Base.metadata.create_all(engine)
-
-#     def teardown():
-#         session.transaction.rollback()
-#         Base.metadata.drop_all(engine)
-
-#     request.addfinalizer(teardown)
-#     return session
-
-
-# @pytest.fixture
-# def dummy_request(db_session):
-#     """Instantiate a fake HTTP Request, complete with a database session.
-
-#     This is a function-level fixture, so every new request will have a
-#     new database session.
-#     """
-#     return testing.DummyRequest(dbsession=db_session)
-
-
-# @pytest.fixture
-# def add_models(dummy_request):
+# def add_user_models(dummy_request):
 #     """Add a bunch of model instances to the database.
 
 #     Every test that includes this fixture will add new random expenses.
@@ -74,80 +82,151 @@
 #     dummy_request.dbsession.add_all(EXPENSES)
 
 
-# @pytest.fixture
-# def set_auth_credentials():
-#     """Make a username/password combo for testing."""
-#     import os
-#     from passlib.apps import custom_app_context as pwd_context
-
-#     os.environ["AUTH_USERNAME"] = "testme"
-#     os.environ["AUTH_PASSWORD"] = pwd_context.hash("foobar")
-
-
 # # ======== UNIT TESTS ==========
-
-# def test_new_expenses_are_added(db_session):
-#     """New expenses get added to the database."""
-#     db_session.add_all(EXPENSES)
-#     query = db_session.query(Expense).all()
-#     assert len(query) == len(EXPENSES)
+def test_user_table_empty(db_session):
+    """Test user table is initially empty."""
+    query = db_session.query(User).all()
+    assert not len(query)
 
 
-# def test_list_view_returns_empty_when_empty(dummy_request):
-#     """Test that the list view returns no objects in the expenses iterable."""
-#     from .views.default import list_view
-#     result = list_view(dummy_request)
-#     assert len(result["expenses"]) == 0
+def test_addresses_table_empty(db_session):
+    """Test addresses table is initially empty."""
+    query = db_session.query(AddressBook).all()
+    assert not len(query)
 
 
-# def test_list_view_returns_objects_when_exist(dummy_request, add_models):
-#     """Test that the list view does return objects when the DB is populated."""
-#     from .views.default import list_view
-#     result = list_view(dummy_request)
-#     assert len(result["expenses"]) == 100
+def test_category_table_empty(db_session):
+    """Test category table is initially empty."""
+    query = db_session.query(Category).all()
+    assert not len(query)
 
 
-# def test_list_view_with_categories(dummy_request, add_models):
-#     """Test that the list view does return objects when the DB is populated."""
-#     from .views.default import list_view
-
-#     dummy_request.method = "POST"
-#     dummy_request.POST["category"] = "utilities"
-#     result = list_view(dummy_request)
-#     assert "utilities" in result.location
+def test_attribute_table_empty(db_session):
+    """Test attribute table is initially empty."""
+    query = db_session.query(AddressBook).all()
+    assert not len(query)
 
 
-# def test_detail_view_contains_individual_expense_details(db_session, dummy_request, add_models):
-#     """Test that the detail view actually returns individual expense info."""
-#     from .views.default import detail_view
-#     dummy_request.matchdict["id"] = 12
-#     expense = db_session.query(Expense).get(12)
-#     result = detail_view(dummy_request)
-#     assert result["expense"] == expense
+def test_new_user_is_added(db_session):
+    """New user get added to the database."""
+    new_user = User(username="test", password="test")
+    db_session.add(new_user)
+    query = db_session.query(User).all()
+    assert len(query) == 1
 
 
-# def test_create_view_get_request_is_normal(dummy_request):
-#     """The create view should return an empty dict."""
-#     from .views.default import create_view
-#     result = create_view(dummy_request)
-#     assert result == {}
+def test_new_user_username(db_session):
+    """New user has correct data."""
+    new_user = User(username="test", password="test")
+    db_session.add(new_user)
+    user = db_session.query(User).filter(User.id == 1).first()
+    assert user.username == "test"
 
 
-# def test_create_view_post_request_adds_new_db_item(db_session, dummy_request):
-#     """Posting to the create view adds an item."""
-#     from .views.default import create_view
+def test_new_contact_is_added(db_session):
+    """New contact gets added to correct table."""
+    new_contact = AddressBook(
+        name="test_name",
+        phone="test_phone",
+        email="test_email"
+    )
+    db_session.add(new_contact)
+    query = db_session.query(AddressBook).all()
+    assert len(query) == 1
 
-#     dummy_request.method = "POST"
-#     dummy_request.POST["item"] = "test item"
-#     dummy_request.POST["amount"] = "1234.56"
-#     dummy_request.POST["paid_to"] = "test recipient"
-#     dummy_request.POST["category"] = "rent"
-#     dummy_request.POST["description"] = "test description"
-#     create_view(dummy_request)
-#     new_expense = db_session.query(Expense).first()
-#     latest = new_expense
-#     assert latest.item == "test item"
 
+def test_new_contact_data(db_session):
+    """Test new contact has correct data."""
+    new_contact = AddressBook(
+        name="test_name",
+        phone="test_phone",
+        email="test_email"
+    )
+    db_session.add(new_contact)
+    contact = db_session.query(AddressBook).all()
+    assert contact[0].name == "test_name"
+    assert contact[0].phone == "test_phone"
+    assert contact[0].email == "test_email"
+
+
+def test_new_category_is_added(db_session):
+    """Test new category is added to database."""
+    new_cat = Category(
+        label="test_label",
+        desc="test_desc"
+    )
+    db_session.add(new_cat)
+    query = db_session.query(Category).all()
+    assert len(query) == 1
+
+
+def test_new_category_data(db_session):
+    """Test new category has correct data."""
+    new_cat = Category(
+        label="test_label",
+        desc="test_desc"
+    )
+    db_session.add(new_cat)
+    category = db_session.query(Category).all()
+    assert category[0].label == "test_label"
+    assert category[0].desc == "test_desc"
+
+
+def test_new_attribute_is_added(db_session):
+    """Test new attribute is added to database."""
+    new_att = Attribute(
+        label="test_label",
+        desc="test_desc"
+    )
+    db_session.add(new_att)
+    query = db_session.query(Attribute).all()
+    assert len(query) == 1
+
+
+def test_new_attribute_data(db_session):
+    """Test new attribute has correct data."""
+    new_att = Attribute(
+        label="test_label",
+        desc="test_desc"
+    )
+    db_session.add(new_att)
+    att = db_session.query(Attribute).all()
+    assert att[0].label == "test_label"
+    assert att[0].desc == "test_desc"
+
+
+def test_login_view_bad_credentials(dummy_request):
+    """Test that when given bad credentials login doesn't happen."""
+    from .views.default import login_view
+    dummy_request.POST["username"] = "testme"
+    dummy_request.POST["password"] = "badpassword"
+    result = login_view(dummy_request)
+    assert result == {}
+
+
+def test_login_view_get_request(dummy_request):
+    """Test that you can see the login view."""
+    from .views.default import login_view
+    result = login_view(dummy_request)
+    assert result == {}
+
+
+def test_login_view_good_credentials(dummy_request, test_user):
+    """Test that when given good credentials login can be successful."""
+    from .views.default import login_view
+    from pyramid.httpexceptions import HTTPFound
+    dummy_request.POST["username"] = "test"
+    dummy_request.POST["password"] = "test"
+    result = login_view(dummy_request)
+    assert isinstance(result, HTTPFound)
+
+
+def test_logout_view_redirects(dummy_request):
+    """When logging out you get redirected to the home page."""
+    from .views.default import logout_view
+    from pyramid.httpexceptions import HTTPFound
+    result = logout_view(dummy_request)
+    assert isinstance(result, HTTPFound)
 
 # def test_create_view_post_request_adds_new_db_items(db_session, dummy_request):
 #     """Posting to the create view twice adds another new item."""
@@ -232,30 +311,7 @@
 #     assert isinstance(result, HTTPFound)
 
 
-# def test_login_view_get_request(dummy_request):
-#     """Test that you can see the login view."""
-#     from .views.default import login_view
-#     result = login_view(dummy_request)
-#     assert result == {}
 
-
-# def test_login_view_good_credentials(dummy_request, set_auth_credentials):
-#     """Test that when given good credentials login can be successful."""
-#     from .views.default import login_view
-#     from pyramid.httpexceptions import HTTPFound
-#     dummy_request.POST["username"] = "testme"
-#     dummy_request.POST["password"] = "foobar"
-#     result = login_view(dummy_request)
-#     assert isinstance(result, HTTPFound)
-
-
-# def test_login_view_bad_credentials(dummy_request, set_auth_credentials):
-#     """Test that when given bad credentials login doesn't happen."""
-#     from .views.default import login_view
-#     dummy_request.POST["username"] = "testme"
-#     dummy_request.POST["password"] = "badpass"
-#     result = login_view(dummy_request)
-#     assert result == {}
 
 
 # def test_logout_view_redirects(dummy_request):
