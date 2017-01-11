@@ -61,7 +61,8 @@ def main(argv=sys.argv):
                 name=person["name"],
                 phone=person["phone"],
                 email=person["email"],
-                user=u_id
+                user=u_id,
+                picture=get_picture_binary(os.path.join(here, person["picture"]))
             )
             dbsession.add(add_row)
 
@@ -90,3 +91,15 @@ def main(argv=sys.argv):
                 )
 
                 dbsession.add(link_row)
+
+
+def get_picture_binary(path):
+    """Open an image to save binary data."""
+    with open(path, "rb") as pic_data:
+        return pic_data.read()
+
+
+
+
+
+
