@@ -6,7 +6,7 @@
 
 # from pyramid import testing
 
-# from pylistener.models import Expense, get_tm_session
+# from pylistener.models import User, AddressBook, Categories, Attributes, get_tm_session
 # from pylistener.models.meta import Base
 
 
@@ -22,7 +22,7 @@
 #     This configuration will persist for the entire duration of your PyTest run.
 #     """
 #     settings = {
-#         'sqlalchemy.url': 'postgres:///test_expenses'}
+#         'sqlalchemy.url': 'postgres:///test_pylistener'}
 #     config = testing.setUp(settings=settings)
 #     config.include('pylistener.models')
 #     config.include('pylistener.routes')

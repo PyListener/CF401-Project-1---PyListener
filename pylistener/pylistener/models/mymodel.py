@@ -12,34 +12,13 @@ from sqlalchemy.orm import relationship
 
 from .meta import Base
 
-# user_address_link = Table('user_address', Base.metadata,
-#     user_id=Column(Integer, ForeignKey('users.id'), nullable=False),
-#     address_id=Column(Integer, ForeignKey('addresses.id'), nullable=False)
-# )
-
-user_attributes_link = Table(
-    'user_attributes',
-    Base.metadata,
-    Column("user_id", Integer, ForeignKey('users.id'), nullable=False),
-    Column("attributes_id", Integer, ForeignKey('attributes.id'), nullable=False),
-    Column("priority", Integer, default=1, nullable=False),
-    Column("num_hits", Integer, default=0, nullable=False)
-)
-
-
 class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
     username = Column(Unicode, unique=True)
     password = Column(Unicode)
-    address_rel = relationship(
-        'AddressBook'
-    )
-    attr_rel = relationship(
-        'Attributes',
-        secondary=user_attributes_link,
-        back_populates="user_rel"
-    )
+    address_rel = relationship('AddressBook')
+    attr_assoc_rel = relationship('UserAttributeLink')
 
 
 class AddressBook(Base):
@@ -52,25 +31,31 @@ class AddressBook(Base):
     user = Column(Integer, ForeignKey('users.id'))
 
 
-
-class Categories(Base):
+class Category(Base):
     __tablename__ = 'categories'
     id = Column(Integer, primary_key=True)
     label = Column(Unicode)
     desc = Column(Unicode)
     picture = Column(LargeBinary)
-    children = relationship('Attributes')
+    children = relationship('Attribute')
 
 
-class Attributes(Base):
+class Attribute(Base):
     __tablename__ = 'attributes'
     id = Column(Integer, primary_key=True)
     label = Column(Unicode)
     desc = Column(Unicode)
     picture = Column(LargeBinary)
     cat_id = Column(Integer, ForeignKey('categories.id'))
-    user_rel = relationship(
-        'User',
-        secondary=user_attributes_link,
-        back_populates='attr_rel'
-    )
+    user_assoc_rel = relationship('UserAttributeLink')
+
+
+class UserAttributeLink(Base):
+    __tablename__ = "users_attributes_link"
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False, primary_key=True)
+    attr_id = Column(Integer, ForeignKey('attributes.id'), nullable=False, primary_key=True)
+    priority = Column(Integer, default=1, nullable=False)
+    num_hits = Column(Integer, default=0, nullable=False)
+    user_rel = relationship("User")
+    attr_rel = relationship("Attribute")
+

@@ -1,6 +1,7 @@
 import os
 import sys
 import transaction
+import json
 
 from pyramid.paster import (
     get_appsettings,
@@ -9,13 +10,14 @@ from pyramid.paster import (
 
 from pyramid.scripts.common import parse_vars
 
-from ..models.meta import Base
-from ..models import (
+from pylistener.models.meta import Base
+from pylistener.models import (
     get_engine,
     get_session_factory,
     get_tm_session,
     )
-from ..models import User, AddressBook, Attributes, Categories
+from pylistener.models import User, AddressBook, Attribute, Category, UserAttributeLink
+from passlib.apps import custom_app_context as pwd_context
 
 
 def usage(argv):
@@ -36,12 +38,68 @@ def main(argv=sys.argv):
     engine = get_engine(settings)
     Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
+    session_factory = get_session_factory(engine)
+
+    here = os.path.abspath(os.path.dirname(__file__))
+    with open(os.path.join(here, 'data.json')) as data:
+        json_data = data.read()
+        j_data = json.loads(json_data)
+
+    with open(os.path.join(here, 'contacts.json')) as contacts:
+        test_contacts = contacts.read()
+        j_test_contacts = json.loads(test_contacts)
+
+    with transaction.manager:
+        dbsession = get_tm_session(session_factory, transaction.manager)
+
+        test_user = User(username="testted", password=pwd_context.hash("password"))
+        dbsession.add(test_user)
+
+        u_id = dbsession.query(User).first().id
+        for person in j_test_contacts:
+            add_row = AddressBook(
+                name=person["name"],
+                phone=person["phone"],
+                email=person["email"],
+                user=u_id,
+                picture=get_picture_binary(os.path.join(here, person["picture"]))
+            )
+            dbsession.add(add_row)
+
+        for category in j_data:
+            cat_row = Category(
+                label=category["label"],
+                desc=category["desc"],
+            )
+            dbsession.add(cat_row)
+            cat_id_query = dbsession.query(Category)
+            cat_id = cat_id_query.filter(Category.label == category["label"]).first()
+            for attribute in category["attributes"]:
+                attr_row = Attribute(
+                    label=attribute["label"],
+                    desc=attribute["desc"],
+                    cat_id=int(cat_id.id)
+                )
+                dbsession.add(attr_row)
+
+                u_id = dbsession.query(User).first().id
+                attr_id = dbsession.query(Attribute).filter(Attribute.label == attribute["label"]).first().id
+
+                link_row = UserAttributeLink(
+                    user_id=u_id,
+                    attr_id=attr_id
+                )
+
+                dbsession.add(link_row)
 
 
-    # session_factory = get_session_factory(engine)
+def get_picture_binary(path):
+    """Open an image to save binary data."""
+    with open(path, "rb") as pic_data:
+        return pic_data.read()
 
-    # with transaction.manager:
-    #     dbsession = get_tm_session(session_factory, transaction.manager)
 
-    #     model = MyModel(name='one', value=1)
-    #     dbsession.add(model)
+
+
+
+
