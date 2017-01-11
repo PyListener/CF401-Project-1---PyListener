@@ -166,7 +166,7 @@ def attributes_view(request):
     """Handle the attributes route."""
     if request.authenticated_userid:
         user_id = request.dbsession.query(User).filter(User.username == request.authenticated_userid).first()
-        attributes = request.dbsession.query(Attribute).all()
+        attributes = request.dbsession.query(Attribute).filter(Attribute.cat_id == request.matchdict["cat_id"]).all()
         return {"attributes": attributes, "addr_id": request.matchdict["add_id"], "category_id": request.matchdict["cat_id"]}
     return {}
 
