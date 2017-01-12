@@ -11,7 +11,7 @@ from pylistener.security import check_credentials
 from passlib.apps import custom_app_context as pwd_context
 from pyramid.security import remember, forget
 
-from pylistener.models import User, AddressBook, Category, Attribute
+from pylistener.models import User, AddressBook, Category, Attribute, UserAttributeLink
 from pylistener.scripts.pytextbelt import Textbelt
 
 import os
@@ -168,7 +168,10 @@ def attributes_view(request):
     """Handle the attributes route."""
     try:
         if request.authenticated_userid:
-            attributes = request.dbsession.query(Attribute).filter(Attribute.cat_id == request.matchdict["cat_id"]).all()
+            attributes = request.dbsession.query(User.username, Attribute.id, Attribute.label, Attribute.desc, Attribute.picture, Attribute.cat_id, UserAttributeLink.priority).join(UserAttributeLink.attr_rel) \
+                .filter(User.username == request.authenticated_userid) \
+                .filter(Attribute.cat_id == request.matchdict["cat_id"]) \
+                .order_by(UserAttributeLink.priority).all()
             return {"attributes": attributes, "addr_id": request.matchdict["add_id"], "category_id": request.matchdict["cat_id"]}
     except AttributeError:
         raise exception_response(403)
@@ -178,9 +181,9 @@ def attributes_view(request):
 @view_config(route_name='display', renderer='../templates/display.jinja2')
 def display_view(request):
     contact_id = request.matchdict["add_id"]
-    contact = request.dbsession.query(AddressBook).filter(AddressBook.id == contact_id).first() 
+    contact = request.dbsession.query(AddressBook).filter(AddressBook.id == contact_id).first()
     cat_id = request.matchdict["cat_id"]
-    category = request.dbsession.query(Category).filter(Category.id == cat_id).first() 
+    category = request.dbsession.query(Category).filter(Category.id == cat_id).first()
     att_id = request.matchdict["att_id"]
     attribute = request.dbsession.query(Attribute).filter(Attribute.id == att_id).first()
     content = category.desc + attribute.desc
