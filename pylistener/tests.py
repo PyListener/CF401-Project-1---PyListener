@@ -10,7 +10,7 @@ from pylistener.models import User, AddressBook, Category, Attribute, UserAttrib
 from pylistener.models.meta import Base
 from passlib.apps import custom_app_context as pwd_context
 
-
+TEST_DB = 'postgres://maellevance:password@localhost:5432/test_pylistener'
 
 @pytest.fixture(scope="session")
 def configuration(request):
@@ -24,7 +24,7 @@ def configuration(request):
     This configuration will persist for the entire duration of your PyTest run.
     """
     settings = {
-        'sqlalchemy.url': 'postgres://maellevance:password@localhost:5432/test_pylistener'}
+        'sqlalchemy.url': TEST_DB}
     config = testing.setUp(settings=settings)
     config.include('pylistener.models')
     config.include('pylistener.routes')
@@ -316,83 +316,76 @@ def test_get_picture_binary():
     here = os.path.abspath(os.path.dirname(__file__))
     path = os.path.join(here, 'scripts/img_questions/how.jpg')
     rb = get_picture_binary(path)
-    assert isinstance(rb, bytes)
 
-
-# # Tests security # #
-
-
-
-
-
-
-
-
-# def test_delete_view_removes_an_item(db_session, dummy_request, add_models):
-#     """Delete view removes an item."""
-#     from .views.default import delete_view
-#     expense = db_session.query(Expense).get(2)
-#     dummy_request.matchdict["id"] = expense.id
-#     delete_view(dummy_request)
-#     assert expense not in db_session.query(Expense).all()
-
-
-# def test_delete_view_redirects(dummy_request, add_models):
-#     """When logging out you get redirected to the home page."""
-#     from .views.default import delete_view
-#     from pyramid.httpexceptions import HTTPFound
-#     dummy_request.matchdict["id"] = 2
-#     result = delete_view(dummy_request)
-#     assert isinstance(result, HTTPFound)
-
-
-# def test_api_list_contains_list_of_dicts(dummy_request, add_models):
-#     """When using the list view for the API, get back dictionaries."""
-#     from .views.default import api_list_view
-#     result = api_list_view(dummy_request)
-#     assert isinstance(result[0], dict)
-
-
-# def test_api_list_contains_all_expenses(dummy_request, add_models):
-#     """When using the list view for the API, get back dictionaries."""
-#     from .views.default import api_list_view
-#     result = api_list_view(dummy_request)
-#     expense_dicts = [expense.to_json() for expense in EXPENSES]
-#     for item in expense_dicts:
-#         assert item in result
 
 # # ======== FUNCTIONAL TESTS ===========
 
 
-# @pytest.fixture(scope="session")
-# def testapp(request):
-#     """Create an instance of webtests TestApp for testing routes.
+@pytest.fixture(scope="session")
+def testapp(request):
+    """Create an instance of webtests TestApp for testing routes.
 
-#     With the alchemy scaffold we need to add to our test application the
-#     setting for a database to be used for the models.
-#     We have to then set up the database by starting a database session.
-#     Finally we have to create all of the necessary tables that our app
-#     normally uses to function.
+    With the alchemy scaffold we need to add to our test application the
+    setting for a database to be used for the models.
+    We have to then set up the database by starting a database session.
+    Finally we have to create all of the necessary tables that our app
+    normally uses to function.
 
-#     The scope of the fixture is function-level, so every test will get a new
-#     test application.
-#     """
-#     from webtest import TestApp
-#     from expense_tracker import main
+    The scope of the fixture is function-level, so every test will get a new
+    test application.
+    """
+    from webtest import TestApp
+    from pylistener import main
 
-#     app = main({}, **{"sqlalchemy.url": 'postgres:///test_expenses'})
-#     testapp = TestApp(app)
+    app = main({}, **{'sqlalchemy.url': TEST_DB})
+    testapp = TestApp(app)
 
-#     SessionFactory = app.registry["dbsession_factory"]
-#     engine = SessionFactory().bind
-#     Base.metadata.create_all(bind=engine)
+    SessionFactory = app.registry["dbsession_factory"]
+    engine = SessionFactory().bind
+    Base.metadata.drop_all(engine)
+    Base.metadata.create_all(bind=engine)
 
-#     def tearDown():
-#         Base.metadata.drop_all(bind=engine)
+    return testapp
 
-#     request.addfinalizer(tearDown)
 
-#     return testapp
+@pytest.fixture
+def new_user(testapp):
+    """Add a new user to the database
+    """
+    SessionFactory = testapp.app.registry["dbsession_factory"]
+    with transaction.manager:
+        dbsession = get_tm_session(SessionFactory, transaction.manager)
+        new_user = User(username="test", password="test")
+        dbsession.add(new_user)
+
+
+@pytest.fixture
+def login_fixture(testapp, new_user):
+    """Test that logging redirects."""
+    resp = testapp.post('/login', params={'username': 'test', 'password': 'test'})
+    headers = resp.headers
+    return headers
+
+
+@pytest.fixture
+def fill_the_db(testapp):
+    SessionFactory = testapp.app.registry["dbsession_factory"]
+    with transaction.manager:
+        dbsession = get_tm_session(SessionFactory, transaction.manager)
+        ## FILL IT WITH STUFF
+
+
+def test_login_page_has_form(testapp):
+    """Test that the login route brings up the login template."""
+    html = testapp.get('/login').html
+    assert len(html.find_all('input'))
+
+
+def test_category_view_not_logged_in(testapp, fill_the_db):
+    """Test new-entry route without logging in makes 403 error."""
+    from webtest.app import AppError
+    with pytest.raises(AppError):
+        testapp.get('/category/1')
 
 
 # @pytest.fixture(scope="session")
