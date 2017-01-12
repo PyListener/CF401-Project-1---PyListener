@@ -1,0 +1,36 @@
+body {
+    width: 100%;
+}
+nav {
+    background-color: #009999;
+    width: 100%;
+    height: 80px;
+    margin-bottom: 20px;
+}
+
+.list_item {
+    display: inline-block;
+    width: 120px;
+    height: 120px;
+    padding: 20px;
+    background-color: #97D0A7;
+    border-radius: 10px;
+}
+
+.list_item img{
+    max-height: 120px;
+}
+
+.list_item p {
+    text-align: center;
+    color: black;
+}
+
+.list_item a {
+    text-decoration: none;
+    height: 100%;
+}
+
+.link_item {
+    display: block;
+}
