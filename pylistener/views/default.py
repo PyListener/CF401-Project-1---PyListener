@@ -160,7 +160,6 @@ def categories_view(request):
     return {}
 
 
-
 @view_config(route_name='attribute', renderer='../templates/attributes.jinja2')
 def attributes_view(request):
     """Handle the attributes route."""
@@ -169,6 +168,7 @@ def attributes_view(request):
         attributes = request.dbsession.query(Attribute).filter(Attribute.cat_id == request.matchdict["cat_id"]).all()
         return {"attributes": attributes, "addr_id": request.matchdict["add_id"], "category_id": request.matchdict["cat_id"]}
     return {}
+
 
 @view_config(route_name='display', renderer='../templates/display.jinja2')
 def display_view(request):
