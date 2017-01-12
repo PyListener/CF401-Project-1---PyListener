@@ -29,6 +29,10 @@
         <li><a href="{{ request.route_url('register') }}">Register</a></li>
         {% endif %}
       </ul>
+      <!-- Not sure how to pull userid; see also routes.py and module.css -->
+      <ul class=manage_icon>
+        <li><a href="{{ request.route_url('manage', user_id=request.authenticated_userid) }}"><i class="fa fa-cog" aria-hidden="true"></i></a></li>l
+      </ul>
     </nav>
     {% block content %}
     {% endblock content %}
