@@ -37,4 +37,4 @@ def includeme(config):
     session_secret = os.environ.get("SESSION_SECRET", "itsaseekrit")
     session_factory = SignedCookieSessionFactory(session_secret)
     config.set_session_factory(session_factory)
-    config.set_default_csrf_options(require_csrf=True)
+    # config.set_default_csrf_options(require_csrf=True)
