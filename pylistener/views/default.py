@@ -130,6 +130,8 @@ def manage_view(request):
                         cat_id=category_id.id,
                     )
                     request.dbsession.add(new_attr)
+    # if request.authenticated_userid:
+    #     user_id = request.authenticated_userid
     query = request.dbsession.query(Category)
     categories = query.all()
     return {"categories": categories}

@@ -3,11 +3,10 @@
 {% if request.authenticated_userid %}
     <ul>
         {% for category in categories %}
-        <li>
-            <a href="{{ request.route_url('attribute', add_id=addr_id, cat_id=category.id) }}">
+        <li class="list_item">
+            <a class="link_item" href="{{ request.route_url('attribute', add_id=addr_id, cat_id=category.id) }}">
                 <img src="{{ request.route_url('picture', db_id='cat', pic_id=category.id) }}">
                 <p>{{ category.label }}</p>
-                <hr>
             </a>
         </li>
         {% endfor %}
