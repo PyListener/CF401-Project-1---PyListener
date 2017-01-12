@@ -16,5 +16,23 @@
         "phone": "+44 303 123 7300",
         "email": "antiquated@adventure.com",
         "picture": "img_address/mary.jpg"
+    },
+    {
+        "name": "Zer0 Cool",
+        "phone": "(360) 550-3355",
+        "email": "hack@planet.com",
+        "picture": "img_address/zero_cool.jpg"
+    },
+    {
+        "name": "The Dude",
+        "phone": "(555) 555-5555",
+        "email": "the@dude.abides",
+        "picture": "img_address/the_dude.jpg"
+    },
+    {
+        "name": "Tig Notaro",
+        "phone": "(555) 123-4567",
+        "email": "still@alive.com",
+        "picture": "img_address/tig.jpg"
     }
 ]

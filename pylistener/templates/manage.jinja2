@@ -5,36 +5,44 @@
     <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
 
     <label for="img">Image</label>
-    <input name="contact_picture" type="file" required>
+    <input name="contact_img" type="file" required>
+    <br />
     <label for="contact_name">Name</label>
     <input id="contact_name" name="contact_name" type="text" required>
+    <br />
     <label for="contact_phone">Phone</label>
     <input name="contact_phone" type="text" >
+    <br />
     <label for="contact_email">Email</label>
     <input name="contact_email" type="text" >
+    <br />
     <input type="submit" value="Add Contact" name="contact">
 </form>
-
+<hr>
 <form id="category" method="post" accept-charset="utf-8"
       enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
 
-    <label for="cat_img">Attribute Image</label>
+    <label for="cat_img">Category Image</label>
     <input name="cat_img" type="file" required>
+    <br />
     <label for="cat_label">Name</label>
     <input name="cat_label" type="text" required>
+    <br />
     <label for="cat_desc">Description</label>
     <input name="cat_desc" type="text" required>
+    <br />
 
     <input type="submit" value="Add Category" name="category">
 </form>
-
+<hr>
 <form id="attribute" method="post" accept-charset="utf-8"
       enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
 
     <label for="attr_img">Attribute Image</label>
     <input name="attr_img" type="file">
+    <br />
     <label for="attr_label">Name</label>
     <input  name="attr_label" type="text">
     <select name="attr_cat" required>
@@ -42,8 +50,10 @@
         <option value="{{category.label}}">{{category.label}}</option>
         {% endfor %}
     </select>
+    <br />
     <label for="attr_desc"></label>
     <input name="attr_desc" type="text">
+    <br />
 
     <input type="submit" value="Add Attribute" name="attribute">
 </form>

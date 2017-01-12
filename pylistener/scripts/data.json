@@ -1,151 +1,163 @@
 [{
     "label": "wants",
     "desc": "I would like, ",
-    "picture": "",
+    "picture": "img_wants/want.jpg",
     "attributes": [{
         "label": "play",
         "desc": "to play.",
-        "picture": ""
+        "picture": "img_wants/play.jpg"
     }, {
         "label": "toy",
         "desc": "my toy.",
-        "picture": ""
+        "picture": "img_wants/toys.jpg"
     }, {
         "label": "leave",
         "desc": "to leave.",
-        "picture": ""
+        "picture": "img_wants/leave_go.jpg"
     }, {
         "label": "game",
         "desc": "to play a game.",
-        "picture": ""
+        "picture": "img_wants/TV.jpg"
     }, {
         "label": "movie",
         "desc": "to watch a movie.",
-        "picture": ""
+        "picture": "img_wants/movie_theater.jpg"
     }, {
         "label": "book",
         "desc": "to read a book.",
-        "picture": ""
+        "picture": "img_wants/book.jpg"
     }, {
         "label": "that",
         "desc": "that thing.",
-        "picture": ""
+        "picture": "img_wants/that_finger.jpg"
+    }, {
+        "label": "wine",
+        "desc": "some wine.",
+        "picture": "img_wants/wine.jpg"
+    }, {
+        "label": "music",
+        "desc": "to listen to music.",
+        "picture": "img_wants/music.jpg"
+    }, {
+        "label": "clothes",
+        "desc": "a change of clothes.",
+        "picture": "img_wants/clothes.jpg"
     }]
 }, {
     "label": "needs",
     "desc": "I need, ",
-    "picture": "",
+    "picture": "img_needs/need.jpg",
     "attributes": [{
         "label": "food",
         "desc": "something to eat.",
-        "picture": ""
+        "picture": "img_needs/burger.jpg"
     }, {
         "label": "drink",
         "desc": "something to drink.",
-        "picture": ""
+        "picture": "img_needs/drink.jpg"
     }, {
         "label": "medicine",
         "desc": "my medicine.",
-        "picture": ""
+        "picture": "img_needs/medicine.jpg"
     }, {
         "label": "restroom",
         "desc": "to use the restroom",
-        "picture": ""
+        "picture": "img_needs/bathroom.jpg"
     }, {
         "label": "sleep",
         "desc": "to sleep",
-        "picture": ""
+        "picture": "img_needs/bed.jpg"
     }, {
         "label": "help",
         "desc": "help.",
-        "picture": ""
+        "picture": "img_needs/doctor.jpg"
     }]
 }, {
     "label": "emotions",
     "desc": "I feel, ",
-    "picture": "",
+    "picture": "img_emotions/emotions.jpg",
     "attributes": [{
         "label": "happy",
         "desc": "happy.",
-        "picture": ""
+        "picture": "img_emotions/happy.jpg"
     }, {
         "label": "sad",
         "desc": "sad.",
-        "picture": ""
+        "picture": "img_emotions/sad.jpg"
     }, {
         "label": "lonely",
         "desc": "lonely",
-        "picture": ""
+        "picture": "img_emotions/bored_lonely.jpg"
     }, {
         "label": "mad",
         "desc": "mad.",
-        "picture": ""
+        "picture": "img_emotions/mad.jpg"
     }, {
         "label": "tired",
         "desc": "tired",
-        "picture": ""
+        "picture": "img_emotions/tired.jpg"
     }, {
         "label": "scared",
         "desc": "scared.",
-        "picture": ""
+        "picture": "img_emotions/scared.jpg"
+    }, {
+        "label": "confused",
+        "desc": "confused.",
+        "picture": "img_emotions/confused.jpg"
     }]
 
 }, {
     "label": "tell",
     "desc": "",
-    "picture": "",
+    "picture": "img_tell/tell.jpg",
     "attributes": [{
         "label": "thank you",
         "desc": "thank you.",
-        "picture": ""
+        "picture": "img_tell/thank_you.jpg"
     }, {
         "label": "love",
         "desc": "I love you.",
-        "picture": ""
+        "picture": "img_tell/love_heart.jpg"
     }, {
         "label": "stop",
         "desc": "please stop.",
-        "picture": ""
-    }, {
-        "label": "continue",
-        "desc": "please continue.",
-        "picture": ""
+        "picture": "img_tell/no_forbidden_circle_slash.jpg"
     }, {
         "label": "yes",
         "desc": "yes.",
-        "picture": ""
+        "picture": "img_tell/yes_head_nod.jpg"
     }, {
         "label": "no",
         "desc": "no.",
-        "picture": ""
+        "picture": "img_tell/no_head_shake.jpg"
     }, {
         "label": "don't know",
         "desc": "I don't know.",
-        "picture": ""
+        "picture": "img_emotions/confused.jpg"
     }]
 }, {
     "label": "questions",
-    "desc": "",
-    "picture": "",
+    "desc": "questions",
+    "picture": "img_questions/question.jpg",
     "attributes": [{
         "label": "why",
         "desc": "why?",
-        "picture": ""
+        "picture": "img_questions/why.jpg"
     }, {
         "label": "how",
         "desc": "how?",
-        "picture": ""
+        "picture": "img_questions/how.jpg"
     }, {
         "label": "when",
         "desc": "when?",
-        "picture": ""
+        "picture": "img_questions/when.jpg"
     }, {
         "label": "who",
         "desc": "who?",
-        "picture": ""
+        "picture": "img_questions/who.jpg"
     }, {
         "label": "what",
-        "desc": "what?",
-        "picture": ""
+        "desc": "WAT?",
+        "picture": "img_questions/what.jpg"
     }]
 }]

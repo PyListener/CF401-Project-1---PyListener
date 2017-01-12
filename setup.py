@@ -18,7 +18,10 @@ requires = [
     'zope.sqlalchemy',
     'waitress',
     'psycopg2',
-    'passlib'
+    'passlib',
+    'yagmail',
+    'keyring',
+    'requests'
     ]
 
 tests_require = [
