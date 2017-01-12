@@ -1,8 +1,6 @@
 from pyramid.response import Response
 from pyramid.view import view_config
 
-from sqlalchemy.exc import DBAPIError
-
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import exception_response
 
@@ -24,6 +22,7 @@ HERE = os.path.dirname(os.path.realpath(__file__))
 
 @view_config(route_name='home', renderer='../templates/home.jinja2')
 def home_view(request):
+    """Handle the home route."""
     if request.authenticated_userid:
         user = request.authenticated_userid
         contacts = request.dbsession.query(AddressBook).join(User.address_rel).filter(User.username == user).all()
@@ -153,17 +152,22 @@ def register_view(request):
     return {}
 
 
-@view_config(route_name='category', renderer='../templates/categories.jinja2')
+@view_config(
+    route_name='category',
+    renderer='../templates/categories.jinja2',
+    permission="manage"
+)
 def categories_view(request):
     """Handle the categories route."""
-    try:
-        if request.authenticated_userid:
+    if request.authenticated_userid:
             categories = request.dbsession.query(Category).all()
             return {"categories": categories, "addr_id": request.matchdict["add_id"]}
-    except AttributeError:
-        raise exception_response(403)
 
-@view_config(route_name='attribute', renderer='../templates/attributes.jinja2')
+
+@view_config(
+    route_name='attribute',
+    renderer='../templates/attributes.jinja2',
+    permission="manage")
 def attributes_view(request):
     """Handle the attributes route."""
     try:
@@ -177,9 +181,12 @@ def attributes_view(request):
         raise exception_response(403)
 
 
-
-@view_config(route_name='display', renderer='../templates/display.jinja2')
+@view_config(
+    route_name='display',
+    renderer='../templates/display.jinja2',
+    permission="manage")
 def display_view(request):
+    """Handle the display route."""
     contact_id = request.matchdict["add_id"]
     contact = request.dbsession.query(AddressBook).filter(AddressBook.id == contact_id).first()
     cat_id = request.matchdict["cat_id"]
@@ -212,22 +219,3 @@ def picture_handler(request):
     elif request.matchdict["db_id"] == "att":
         picture_data = request.dbsession.query(Attribute).get(request.matchdict['pic_id']).picture
     return Response(content_type="image/jpg", body=picture_data)
-
-
-
-
-db_err_msg = """\
-Pyramid is having a problem using your SQL database.  The problem
-might be caused by one of the following things:
-
-1.  You may need to run the "initialize_pylistener_db" script
-    to initialize your database tables.  Check your virtual
-    environment's "bin" directory for this script and try to run it.
-
-2.  Your database server may not be running.  Check that the
-    database server referred to by the "sqlalchemy.url" setting in
-    your "development.ini" file is running.
-
-After you fix the problem, please restart the Pyramid application to
-try it again.
-"""

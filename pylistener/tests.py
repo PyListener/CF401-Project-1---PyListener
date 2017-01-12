@@ -12,6 +12,7 @@ from passlib.apps import custom_app_context as pwd_context
 
 TEST_DB = 'postgres://maellevance:password@localhost:5432/test_pylistener'
 
+
 @pytest.fixture(scope="session")
 def configuration(request):
     """Set up a Configurator instance.
@@ -47,6 +48,7 @@ def db_session(configuration, request):
     SessionFactory = configuration.registry['dbsession_factory']
     session = SessionFactory()
     engine = session.bind
+    Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
 
     def teardown():
@@ -316,12 +318,12 @@ def test_get_picture_binary():
     here = os.path.abspath(os.path.dirname(__file__))
     path = os.path.join(here, 'scripts/img_questions/how.jpg')
     rb = get_picture_binary(path)
-
+    assert isinstance(rb, bytes)
 
 # # ======== FUNCTIONAL TESTS ===========
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def testapp(request):
     """Create an instance of webtests TestApp for testing routes.
 
@@ -350,12 +352,11 @@ def testapp(request):
 
 @pytest.fixture
 def new_user(testapp):
-    """Add a new user to the database
-    """
+    """Add a new user to the database."""
     SessionFactory = testapp.app.registry["dbsession_factory"]
     with transaction.manager:
         dbsession = get_tm_session(SessionFactory, transaction.manager)
-        new_user = User(username="test", password="test")
+        new_user = User(username="test", password=pwd_context.hash("test"))
         dbsession.add(new_user)
 
 
@@ -369,10 +370,34 @@ def login_fixture(testapp, new_user):
 
 @pytest.fixture
 def fill_the_db(testapp):
+    """Fill the database with a contact, category and attribute."""
+    from .scripts.initializedb import get_picture_binary
+    import os
+    here = here = os.path.abspath(os.path.dirname(__file__))
     SessionFactory = testapp.app.registry["dbsession_factory"]
     with transaction.manager:
         dbsession = get_tm_session(SessionFactory, transaction.manager)
-        ## FILL IT WITH STUFF
+        picture = get_picture_binary(os.path.join(here, "placeholder.jpg"))
+        new_user = AddressBook(
+            name="user name",
+            phone="user phone",
+            email="user email",
+            picture=picture
+        )
+        dbsession.add(new_user)
+        new_category = Category(
+            label="category label",
+            desc="desc",
+            picture=picture,
+        )
+        dbsession.add(new_category)
+        new_attribute = Attribute(
+            label="attribute label",
+            desc="description label",
+            picture=picture,
+            cat_id=1
+        )
+        dbsession.add(new_attribute)
 
 
 def test_login_page_has_form(testapp):
@@ -381,174 +406,57 @@ def test_login_page_has_form(testapp):
     assert len(html.find_all('input'))
 
 
-def test_category_view_not_logged_in(testapp, fill_the_db):
+def test_category_view_not_logged_in(testapp):
     """Test new-entry route without logging in makes 403 error."""
     from webtest.app import AppError
-    with pytest.raises(AppError):
+    with pytest.raises(AppError, message="403 Forbidden"):
         testapp.get('/category/1')
 
 
-# @pytest.fixture(scope="session")
-# def fill_the_db(testapp):
-#     """Fill the database with some model instances and return the session.
-
-#     Start a database session with the transaction manager and add all of the
-#     expenses. This will be done anew for every test.
-#     """
-
-#     SessionFactory = testapp.app.registry["dbsession_factory"]
-#     with transaction.manager:
-#         dbsession = get_tm_session(SessionFactory, transaction.manager)
-#         dbsession.add_all(new_expenses)
-
-#     return dbsession
+def test_category_view_logged_in(testapp, fill_the_db, login_fixture):
+    """Test category view when logged in is accessible."""
+    response = testapp.get('/category/1', params=login_fixture)
+    assert response.status_code == 200
 
 
-# @pytest.fixture
-# def new_session(testapp):
-#     """Return a session for inspecting the database."""
-#     SessionFactory = testapp.app.registry["dbsession_factory"]
-#     with transaction.manager:
-#         dbsession = get_tm_session(SessionFactory, transaction.manager)
-#     return dbsession
+def test_404_view(testapp):
+    """Test a non registered route will raise a 404."""
+    from webtest.app import AppError
+    with pytest.raises(AppError, message="404 Not Found"):
+        testapp.get('/raise404')
 
 
-# def test_home_route_has_table(testapp):
-#     """The home page has a table in the html."""
-#     response = testapp.get('/', status=200)
-#     html = response.html
-#     assert len(html.find_all("table")) == 1
+def test_home_view_authenticated(testapp, login_fixture):
+    """Test home view is accessible authenticated."""
+    response = testapp.get('/', params=login_fixture)
+    assert response.status_code == 200
 
 
-# def test_home_route_has_table2(testapp):
-#     """Without data the home page only has the header row in its table."""
-#     response = testapp.get('/', status=200)
-#     html = response.html
-#     assert len(html.find_all("tr")) == 1
+def test_home_authenticated_has_contacts(testapp, fill_the_db, login_fixture):
+    """Test home views renders contacts when authenticated."""
+    response = testapp.get('/', params=login_fixture).html
+    assert len(response.find_all("ul")) == 1
 
 
-# def test_detail_route_is_not_found(testapp):
-#     """Without data there's no detail page."""
-#     response = testapp.get('/expense/4', status=404)
-#     assert response.status_code == 404
-
-# # ========= WITH DATA IN THE DB ========
+def test_attribute_view_authenticated(testapp, fill_the_db, login_fixture):
+    """Test attribute view with full db and authenticated user."""
+    response = testapp.get('/attribute/1/1', params=login_fixture)
+    assert response.status_code == 200
 
 
-# def test_home_route_with_data_has_filled_table(testapp, fill_the_db):
-#     """When there's data in the database, the home page has some rows."""
-#     response = testapp.get('/', status=200)
-#     html = response.html
-#     assert len(html.find_all("tr")) == 101
+def test_attribute_authenticated_has_attributes(testapp, fill_the_db, login_fixture):
+    """Test attribute view renders attributes when authenticated."""
+    response = testapp.get('/attribute/1/1', params=login_fixture)
+    assert len(response.html.find_all("img")) == 1
 
 
-# def test_login_route_can_be_seen(testapp):
-#     """Can send a GET request to the login route and see three input fields."""
-#     response = testapp.get("/login", status=200)
-#     html = response.html
-#     assert len(html.find_all("input")) == 3
+def test_display_view_authenticated(testapp, fill_the_db, login_fixture):
+    """Test display view is accessible authenticated."""
+    response = testapp.get("/display/1/1/1", params=login_fixture)
+    assert response.status_code == 200
 
 
-# def test_detail_route_has_details(testapp, new_session):
-#     """Can send a GET request to a detail route and see item info."""
-#     response = testapp.get("/expense/4")
-#     expense = new_session.query(Expense).get(4)
-#     assert expense.item in response.text
-
-# # ======== TESTING WITH SECURITY ==========
-
-
-# def test_create_route_is_forbidden(testapp):
-#     """Any old user trying to create a new expense sees the forbidden view."""
-#     response = testapp.get("/new-expense")
-#     assert "can't do that" in response.text
-
-
-# def test_edit_route_is_forbidden(testapp):
-#     """Any old user trying to create a new expense sees the forbidden view."""
-#     response = testapp.get("/expense/4/edit")
-#     assert "can't do that" in response.text
-
-
-# def test_delete_route_is_forbidden(testapp):
-#     """Any old user trying to delete an expense sees the forbidden view."""
-#     response = testapp.get("/delete/4")
-#     assert "can't do that" in response.text
-
-
-# def test_login_with_bad_credentials(set_auth_credentials, testapp):
-#     """Bad credentials remain unauthenticated."""
-#     response = testapp.post("/login", params={
-#         "username": "testme",
-#         "password": "bad password"
-#     })
-#     response = testapp.get("/new-expense")
-#     assert "can't do that" in response.text
-
-
-# def test_login_with_no_credentials(set_auth_credentials, testapp):
-#     """No credential login remains unauthenticated."""
-#     response = testapp.post("/login", params={
-#         "username": "",
-#         "password": ""
-#     })
-#     response = testapp.get("/new-expense")
-#     assert "can't do that" in response.text
-
-# # ======== TESTING WITH SECURITY | APP IS AUTHENTICATED ==========
-
-
-# def test_auth_app_can_see_create_route(set_auth_credentials, testapp):
-#     """A logged-in user should be able to access the create view."""
-#     response = testapp.post("/login", params={
-#         "username": "testme",
-#         "password": "foobar"
-#     })
-#     response = testapp.get("/new-expense")
-#     assert response.status_code == 200
-
-
-# def test_auth_app_can_create_expense(testapp):
-#     """A logged-in user can post a new expense."""
-#     response = testapp.get("/new-expense")
-#     token = response.html.find("input", {"type": "hidden"}).attrs["value"]
-#     testapp.post("/new-expense", params={
-#         "csrf_token": token,
-#         "item": "another item",
-#         "amount": "2743.88",
-#         "paid_to": "another person",
-#         "category": "another thing",
-#         "description": "another item"
-#     })
-#     response = testapp.get("/")
-#     assert "another item" in response.text
-
-
-# def test_auth_app_can_edit_expense(testapp):
-#     """A logged-in user can edit an existing expense."""
-#     response = testapp.get("/expense/4/edit")
-#     token = response.html.find("input", {"type": "hidden"}).attrs["value"]
-#     testapp.post("/expense/4/edit", params={
-#         "csrf_token": token,
-#         "item": "an edited expense",
-#         "amount": "0.00",
-#         "paid_to": "no one",
-#         "category": "who cares",
-#         "description": "it was edited"
-#     })
-#     response = testapp.get("/expense/4")
-#     assert "an edited expense" in response.text
-
-
-# def test_auth_app_can_delete_expense(testapp):
-#     """A logged-in user can delete an existing expense."""
-#     response = testapp.get("/delete/4")
-#     response = testapp.get('/expense/4', status=404)
-#     assert response.status_code == 404
-
-
-# def test_logged_out_user_can_no_longer_create(testapp):
-#     """A user that has logged out can't create expenses."""
-#     testapp.get("/logout")
-#     response = testapp.get("/new-expense")
-#     assert "can't do that" in response.text
+def test_display_authenticated_has_string(testapp, fill_the_db, login_fixture):
+    """Test display view renders the string when authenticated."""
+    response = testapp.get("/display/1/1/1", params=login_fixture)
+    assert len(response.html.find_all('h1')) == 1
