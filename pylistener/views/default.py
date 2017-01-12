@@ -67,7 +67,12 @@ def manage_view(request):
                 input_type = mimetypes.guess_type(request.POST['contact_img'].filename)[0]
                 if input_type[:5] == 'image':
                     handle_new_contact(request, input_file)
-                return {}
+                    message = "New Contact Added."
+                    request.session.flash(message)
+                else:
+                    message = "Please try again with an image file."
+                    request.session.flash(message)
+            return {}
         except KeyError:
             try:
                 if request.POST['category']:
@@ -75,6 +80,11 @@ def manage_view(request):
                     input_type = mimetypes.guess_type(request.POST['cat_img'].filename)[0]
                 if input_type[:5] == 'image':
                     handle_new_category(request, input_file)
+                    message = "New Category Added. Don't forget Attributes!"
+                    request.session.flash(message)
+                else:
+                    message = "Please try again with an image file."
+                    request.session.flash(message)
                 return {}
             except KeyError:
                 if request.POST['attribute']:
@@ -82,6 +92,11 @@ def manage_view(request):
                     input_type = mimetypes.guess_type(request.POST['attr_img'].filename)[0]
                 if input_type[:5] == 'image':
                     handle_new_attribute(request, input_file)
+                    message = "New Attribute Added."
+                    request.session.flash(message)
+                else:
+                    message = "Please try again with an image file."
+                    request.session.flash(message)
                 return {}
     query = request.dbsession.query(Category)
     categories = query.all()
@@ -238,4 +253,3 @@ def handle_new_picture(name, input_file):
         picture = blob
     os.remove(temp_file_path)
     return picture
-
