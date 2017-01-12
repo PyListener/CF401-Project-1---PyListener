@@ -1,5 +1,13 @@
 {% extends 'layout.jinja2' %}
 {% block content %}
+{% if request.session.peek_flash() %}
+        <div class="flashes">
+        {% for message in request.session.pop_flash()%}
+            {{ message }}
+        {% endfor %}
+</div>
+{% endif %}
+
 <h1>Address Book</h1>
 <form class="manage_form" id="address_book" method="post" accept-charset="utf-8"
       enctype="multipart/form-data">
