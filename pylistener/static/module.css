@@ -19,6 +19,25 @@ nav ul li {
     padding-right: 25px;
 }
 
+/*.main_container {
+    text-align: center;
+    }
+
+.main_container ul {
+    display: inline-block;
+    margin: auto;
+    width: 50%;
+    padding: 0;
+    /* For IE, the outcast 
+    zoom:1;
+    *display: inline;
+    }
+
+.main_container li {
+    float: left;
+    padding: 2px 5px;
+    }*/*/
+
 .list_item {
     display: inline-block;
     width: 120px;
@@ -47,5 +66,5 @@ nav ul li {
 }
 
 .link_item {
-    display: block;
+    display: inline-block;
 }
