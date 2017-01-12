@@ -6,7 +6,37 @@ nav {
     width: 100%;
     height: 80px;
     margin-bottom: 20px;
+    display: inline-block;
 }
+
+nav ul li {
+    padding-left: 25px;
+    padding-top: 40%;
+}
+
+.manage_icon {
+    float: right;
+    padding-right: 25px;
+}
+
+/*.main_container {
+    text-align: center;
+    }
+
+.main_container ul {
+    display: inline-block;
+    margin: auto;
+    width: 50%;
+    padding: 0;
+    /* For IE, the outcast 
+    zoom:1;
+    *display: inline;
+    }
+
+.main_container li {
+    float: left;
+    padding: 2px 5px;
+    }*/*/
 
 .list_item {
     display: inline-block;
@@ -15,10 +45,13 @@ nav {
     padding: 20px;
     background-color: #97D0A7;
     border-radius: 10px;
+    margin: auto;
+    line-height: 120px;
 }
 
 .list_item img{
     max-height: 120px;
+    vertical-align: bottom;
 }
 
 .list_item p {
@@ -29,8 +62,9 @@ nav {
 .list_item a {
     text-decoration: none;
     height: 100%;
+    vertical-align: bottom;
 }
 
 .link_item {
-    display: block;
+    display: inline-block;
 }
