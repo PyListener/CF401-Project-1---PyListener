@@ -1,6 +1,6 @@
 [{
     "label": "wants",
-    "desc": "I would like, ",
+    "desc": "I would like",
     "picture": "img_wants/want.jpg",
     "attributes": [{
         "label": "play",
@@ -45,7 +45,7 @@
     }]
 }, {
     "label": "needs",
-    "desc": "I need, ",
+    "desc": "I need",
     "picture": "img_needs/need.jpg",
     "attributes": [{
         "label": "food",
@@ -61,11 +61,11 @@
         "picture": "img_needs/medicine.jpg"
     }, {
         "label": "restroom",
-        "desc": "to use the restroom",
+        "desc": "to use the restroom.",
         "picture": "img_needs/bathroom.jpg"
     }, {
         "label": "sleep",
-        "desc": "to sleep",
+        "desc": "to sleep.",
         "picture": "img_needs/bed.jpg"
     }, {
         "label": "help",
@@ -74,10 +74,10 @@
     }]
 }, {
     "label": "emotions",
-    "desc": "I feel, ",
+    "desc": "I feel",
     "picture": "img_emotions/emotions.jpg",
     "attributes": [{
-        "label": "happy",
+        "label": "happy.",
         "desc": "happy.",
         "picture": "img_emotions/happy.jpg"
     }, {
@@ -86,7 +86,7 @@
         "picture": "img_emotions/sad.jpg"
     }, {
         "label": "lonely",
-        "desc": "lonely",
+        "desc": "lonely.",
         "picture": "img_emotions/bored_lonely.jpg"
     }, {
         "label": "mad",
@@ -94,7 +94,7 @@
         "picture": "img_emotions/mad.jpg"
     }, {
         "label": "tired",
-        "desc": "tired",
+        "desc": "tired.",
         "picture": "img_emotions/tired.jpg"
     }, {
         "label": "scared",
@@ -112,7 +112,7 @@
     "picture": "img_tell/tell.jpg",
     "attributes": [{
         "label": "thank you",
-        "desc": "thank you.",
+        "desc": "Thank you.",
         "picture": "img_tell/thank_you.jpg"
     }, {
         "label": "love",
@@ -120,15 +120,15 @@
         "picture": "img_tell/love_heart.jpg"
     }, {
         "label": "stop",
-        "desc": "please stop.",
+        "desc": "Please stop.",
         "picture": "img_tell/no_forbidden_circle_slash.jpg"
     }, {
         "label": "yes",
-        "desc": "yes.",
+        "desc": "Yes.",
         "picture": "img_tell/yes_head_nod.jpg"
     }, {
         "label": "no",
-        "desc": "no.",
+        "desc": "No.",
         "picture": "img_tell/no_head_shake.jpg"
     }, {
         "label": "don't know",
@@ -137,7 +137,7 @@
     }]
 }, {
     "label": "questions",
-    "desc": "questions",
+    "desc": "Can you tell me,",
     "picture": "img_questions/question.jpg",
     "attributes": [{
         "label": "why",
