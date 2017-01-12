@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="PyListener web application">
+    <meta name="description" content="PyListener web application"2
     <meta name="author" content="PyListener">
     <link rel="shortcut icon" href="{{request.static_url('pylistener:static/pyramid-16x16.png')}}">
 
@@ -22,7 +22,7 @@
     <nav>
       <ul>
         <li>
-          <a href="{{ request.route_url('home') }}"><i class="fa fa-home" aria-hidden="true"></i></a>
+          <a href="{{ request.route_url('home') }}"><i class="fa fa-home fa-2x" aria-hidden="true"></i></a>
         </li>
         {% if not request.authenticated_userid %}
         <li><a href="{{ request.route_url('login') }}">Log In</a></li>
@@ -31,7 +31,7 @@
       </ul>
       <!-- Not sure how to pull userid; see also routes.py and module.css -->
       <ul class=manage_icon>
-        <li><a href="{{ request.route_url('manage', user_id=request.authenticated_userid) }}"><i class="fa fa-cog" aria-hidden="true"></i></a></li>l
+        <li><a href="{{ request.route_url('manage', user_id=request.authenticated_userid) }}"><i class="fa fa-cog fa-2x" aria-hidden="true"></i></a></li>
       </ul>
     </nav>
     {% block content %}
