@@ -167,11 +167,12 @@ def attributes_view(request):
     """Handle the attributes route."""
     try:
         if request.authenticated_userid:
-            attributes = request.dbsession.query(User.username, Attribute.id, Attribute.label, Attribute.desc, Attribute.picture, Attribute.cat_id, UserAttributeLink.priority).join(UserAttributeLink.attr_rel) \
+            attributes = request.dbsession.query(User.username, Attribute.id, Attribute.label, Attribute.desc, Attribute.picture, Attribute.cat_id, UserAttributeLink.priority) \
+                .join(UserAttributeLink.attr_rel) \
                 .filter(User.username == request.authenticated_userid) \
                 .filter(Attribute.cat_id == request.matchdict["cat_id"]) \
                 .order_by(UserAttributeLink.priority).all()
-            return {"attributes": attributes, "addr_id": request.matchdict["add_id"], "category_id": request.matchdict["cat_id"]}
+            return {"attributes": set(attributes), "addr_id": request.matchdict["add_id"], "category_id": request.matchdict["cat_id"]}
     except AttributeError:
         raise exception_response(403)
 
