@@ -1,10 +1,10 @@
 {% extends 'layout.jinja2' %}
 {% block content %}
-<form id="address_book" method="post" accept-charset="utf-8"
+<form class="manage_form" id="address_book" method="post" accept-charset="utf-8"
       enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
 
-    <label for="img">Image</label>
+    <label for="img">Contact Image</label>
     <input name="contact_img" type="file" required>
     <br />
     <label for="contact_name">Name</label>
@@ -16,10 +16,10 @@
     <label for="contact_email">Email</label>
     <input name="contact_email" type="text" >
     <br />
-    <input type="submit" value="Add Contact" name="contact">
+    <input class="manage_button" type="submit" value="Add Contact" name="contact">
 </form>
 <hr>
-<form id="category" method="post" accept-charset="utf-8"
+<form class="manage_form" id="category" method="post" accept-charset="utf-8"
       enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
 
@@ -33,10 +33,10 @@
     <input name="cat_desc" type="text" required>
     <br />
 
-    <input type="submit" value="Add Category" name="category">
+    <input class="manage_button" type="submit" value="Add Category" name="category">
 </form>
 <hr>
-<form id="attribute" method="post" accept-charset="utf-8"
+<form class="manage_form" id="attribute" method="post" accept-charset="utf-8"
       enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
 
@@ -55,7 +55,7 @@
     <input name="attr_desc" type="text">
     <br />
 
-    <input type="submit" value="Add Attribute" name="attribute">
+    <input class="manage_button" type="submit" value="Add Attribute" name="attribute">
 </form>
 
 {% endblock content %}
