@@ -67,7 +67,12 @@ def manage_view(request):
                 input_type = mimetypes.guess_type(request.POST['contact_img'].filename)[0]
                 if input_type[:5] == 'image':
                     handle_new_contact(request, input_file)
-                return {}
+                    message = "New Contact Added."
+                    request.session.flash(message)
+                else:
+                    message = "Please try again with an image file."
+                    request.session.flash(message)
+            return {}
         except KeyError:
             try:
                 if request.POST['category']:
@@ -75,6 +80,11 @@ def manage_view(request):
                     input_type = mimetypes.guess_type(request.POST['cat_img'].filename)[0]
                 if input_type[:5] == 'image':
                     handle_new_category(request, input_file)
+                    message = "New Category Added. Don't forget Attributes!"
+                    request.session.flash(message)
+                else:
+                    message = "Please try again with an image file."
+                    request.session.flash(message)
                 return {}
             except KeyError:
                 if request.POST['attribute']:
@@ -82,10 +92,20 @@ def manage_view(request):
                     input_type = mimetypes.guess_type(request.POST['attr_img'].filename)[0]
                 if input_type[:5] == 'image':
                     handle_new_attribute(request, input_file)
+                    message = "New Attribute Added."
+                    request.session.flash(message)
+                else:
+                    message = "Please try again with an image file."
+                    request.session.flash(message)
                 return {}
-    query = request.dbsession.query(Category)
-    categories = query.all()
-    return {"categories": categories}
+    user = request.dbsession.query(User).filter(User.username == request.authenticated_userid).first().id
+    categories = request.dbsession.query(Category).all()
+    attributes = attributes = request.dbsession.query(User.username, Attribute.id, Attribute.label, Attribute.desc, Attribute.picture, Attribute.cat_id, UserAttributeLink.priority) \
+        .join(UserAttributeLink.attr_rel) \
+        .filter(User.username == request.authenticated_userid) \
+        .order_by(UserAttributeLink.priority).all()
+    contacts = request.dbsession.query(AddressBook).filter(AddressBook.user == user)
+    return {"categories": categories, "attributes": set(attributes), "contacts": contacts}
 
 
 @view_config(route_name='register', renderer='../templates/register.jinja2')
@@ -238,4 +258,3 @@ def handle_new_picture(name, input_file):
         picture = blob
     os.remove(temp_file_path)
     return picture
-
