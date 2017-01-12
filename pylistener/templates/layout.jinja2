@@ -4,31 +4,36 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="pyramid web application">
+    <meta name="description" content="PyListener web application">
     <meta name="author" content="PyListener">
     <link rel="shortcut icon" href="{{request.static_url('pylistener:static/pyramid-16x16.png')}}">
 
     <title>PyListener</title>
 
-    <!-- Custom styles for this scaffold -->
-    <link href="{{request.static_url('pylistener:static/reset.css')}}" rel="stylesheet">
-    <link href="{{request.static_url('pylistener:static/base.css')}}" rel="stylesheet">
-    <link href="{{request.static_url('pylistener:static/layout.css')}}" rel="stylesheet">
-    <link href="{{request.static_url('pylistener:static/module.css')}}" rel="stylesheet">
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="//oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-    <![endif]-->
+    <link href="{{request.static_url('pylistener:static/reset.css')}}" rel="stylesheet" type="text/css">
+    <link href="{{request.static_url('pylistener:static/base.css')}}" rel="stylesheet" type="text/css">
+    <link href="{{request.static_url('pylistener:static/layout.css')}}" rel="stylesheet" type="text/css">
+    <link href="{{request.static_url('pylistener:static/module.css')}}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Ramabhadra" rel="stylesheet">
+
   </head>
 
   <body>
+    <nav>
+      <ul>
+        <li>
+          <a href="{{ request.route_url('home') }}"><i class="fa fa-home" aria-hidden="true"></i></a>
+        </li>
+        {% if not request.authenticated_userid %}
+        <li><a href="{{ request.route_url('login') }}">Log In</a></li>
+        <li><a href="{{ request.route_url('register') }}">Register</a></li>
+        {% endif %}
+      </ul>
+    </nav>
     {% block content %}
     {% endblock content %}
-      
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
+
+    <script src="https://use.fontawesome.com/927692b4ce.js"></script>
     <script src="//oss.maxcdn.com/libs/jquery/1.10.2/jquery.min.js"></script>
   </body>
 </html>
