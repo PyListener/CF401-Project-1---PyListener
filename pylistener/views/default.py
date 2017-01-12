@@ -83,9 +83,14 @@ def manage_view(request):
                 if input_type[:5] == 'image':
                     handle_new_attribute(request, input_file)
                 return {}
-    query = request.dbsession.query(Category)
-    categories = query.all()
-    return {"categories": categories}
+    user = request.dbsession.query(User).filter(User.username == request.authenticated_userid).first().id
+    categories = request.dbsession.query(Category).all()
+    attributes = attributes = request.dbsession.query(User.username, Attribute.id, Attribute.label, Attribute.desc, Attribute.picture, Attribute.cat_id, UserAttributeLink.priority) \
+        .join(UserAttributeLink.attr_rel) \
+        .filter(User.username == request.authenticated_userid) \
+        .order_by(UserAttributeLink.priority).all()
+    contacts = request.dbsession.query(AddressBook).filter(AddressBook.user == user)
+    return {"categories": categories, "attributes": set(attributes), "contacts": contacts}
 
 
 @view_config(route_name='register', renderer='../templates/register.jinja2')
