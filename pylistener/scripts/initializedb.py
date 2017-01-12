@@ -52,8 +52,8 @@ def main(argv=sys.argv):
     with transaction.manager:
         dbsession = get_tm_session(session_factory, transaction.manager)
 
-        test_user = create_user_object("testted", "password")
-        test_user2 = create_user_object("Nurse Jackie", "password1234")
+        test_user = create_user_object("testted", "password", "Tedley Lamar")
+        test_user2 = create_user_object("Nurse Jackie", "password1234", "Charlie")
         dbsession.add(test_user)
         dbsession.add(test_user2)
 
@@ -127,11 +127,12 @@ def create_att_object(lbl, des, pic, c_id):
     )
 
 
-def create_user_object(uname, psswd):
+def create_user_object(uname, psswd,sub_u):
     """Return a User object with given information."""
     return User(
         username=uname,
-        password=pwd_context.hash(psswd)
+        password=pwd_context.hash(psswd),
+        sub_user=sub_u
     )
 
 

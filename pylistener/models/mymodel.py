@@ -18,6 +18,7 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     username = Column(Unicode, unique=True)
     password = Column(Unicode)
+    sub_user = Column(Unicode)
     address_rel = relationship('AddressBook')
     attr_assoc_rel = relationship('UserAttributeLink')
 
