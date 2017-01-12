@@ -143,9 +143,11 @@ def register_view(request):
     if request.POST:
         username = request.POST["username"]
         password = request.POST["password"]
+        sub_user = request.POST["sub_user"]
         new_user = User(
             username=username,
             password=pwd_context.hash(password),
+            sub_user=sub_user
         )
         request.dbsession.add(new_user)
         return HTTPFound(location=request.route_url('manage', id=new_user.username))
@@ -188,13 +190,15 @@ def attributes_view(request):
     permission="manage")
 def display_view(request):
     """Handle the display route."""
+    user = request.dbsession.query(User).filter(User.username == request.authenticated_userid).first()
     contact_id = request.matchdict["add_id"]
     contact = request.dbsession.query(AddressBook).filter(AddressBook.id == contact_id).first()
     cat_id = request.matchdict["cat_id"]
     category = request.dbsession.query(Category).filter(Category.id == cat_id).first()
     att_id = request.matchdict["att_id"]
     attribute = request.dbsession.query(Attribute).filter(Attribute.id == att_id).first()
-    content = category.desc + attribute.desc
+    content = "{0}, you have received a message from {1}. \n\t \"{2} {3}\"" \
+        .format(contact.name, user.sub_user, category.desc, attribute.desc)
     if request.POST:
         try:
             if request.POST['email']:
@@ -207,6 +211,7 @@ def display_view(request):
                 Recipient = Textbelt.Recipient('2066817287', "us")
                 print(contact.phone)
                 Recipient.send(content)
+                return HTTPFound(location=request.route_url('home'))
     return {"content": content}
 
 

@@ -1,6 +1,6 @@
 [{
     "label": "wants",
-    "desc": "I would like, ",
+    "desc": "I would like",
     "picture": "img_wants/want.jpg",
     "pic_mime": "image/jpeg",
     "attributes": [{
@@ -56,7 +56,7 @@
     }]
 }, {
     "label": "needs",
-    "desc": "I need, ",
+    "desc": "I need",
     "picture": "img_needs/need.jpg",
     "pic_mime": "image/jpeg",
     "attributes": [{
@@ -92,11 +92,11 @@
     }]
 }, {
     "label": "emotions",
-    "desc": "I feel, ",
+    "desc": "I feel",
     "picture": "img_emotions/emotions.jpg",
     "pic_mime": "image/jpeg",
     "attributes": [{
-        "label": "happy",
+        "label": "happy.",
         "desc": "happy.",
         "picture": "img_emotions/happy.jpg",
         "pic_mime": "image/jpeg"
@@ -170,7 +170,7 @@
     }]
 }, {
     "label": "questions",
-    "desc": "questions",
+    "desc": "Can you tell me,",
     "picture": "img_questions/question.jpg",
     "pic_mime": "image/jpeg",
     "attributes": [{
