@@ -8,6 +8,10 @@ nav {
     margin-bottom: 20px;
 }
 
+.manage_icon {
+    float: right;
+}
+
 .list_item {
     display: inline-block;
     width: 120px;
@@ -15,10 +19,13 @@ nav {
     padding: 20px;
     background-color: #97D0A7;
     border-radius: 10px;
+    margin: auto;
+    line-height: 120px;
 }
 
 .list_item img{
     max-height: 120px;
+    vertical-align: bottom;
 }
 
 .list_item p {
@@ -29,6 +36,7 @@ nav {
 .list_item a {
     text-decoration: none;
     height: 100%;
+    vertical-align: bottom;
 }
 
 .link_item {
