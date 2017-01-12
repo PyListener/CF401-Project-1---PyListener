@@ -4,6 +4,7 @@ from pyramid.view import view_config
 from sqlalchemy.exc import DBAPIError
 
 from pyramid.httpexceptions import HTTPFound
+from pyramid.httpexceptions import exception_response
 
 
 from pylistener.security import check_credentials
@@ -16,7 +17,6 @@ from pylistener.scripts.pytextbelt import Textbelt
 import os
 import shutil
 import yagmail
-
 
 
 HERE = os.path.dirname(os.path.realpath(__file__))
@@ -39,13 +39,14 @@ def login_view(request):
         username = request.POST["username"]
         password = request.POST["password"]
         user = query.filter(User.username == username).first()
-        real_password = user.password
-        if check_credentials(password, real_password):
-            auth_head = remember(request, username)
-            return HTTPFound(
-                location=request.route_url("manage", id=username),
-                headers=auth_head
-            )
+        if user:
+            real_password = user.password
+            if check_credentials(password, real_password):
+                auth_head = remember(request, username)
+                return HTTPFound(
+                    location=request.route_url("manage", id=username),
+                    headers=auth_head
+                )
     return {}
 
 
@@ -153,21 +154,23 @@ def register_view(request):
 @view_config(route_name='category', renderer='../templates/categories.jinja2')
 def categories_view(request):
     """Handle the categories route."""
-    if request.authenticated_userid:
-        user = request.authenticated_userid
-        categories = request.dbsession.query(Category).all()
-        return {"categories": categories, "addr_id": request.matchdict["add_id"]}
-    return {}
-
+    try:
+        if request.authenticated_userid:
+            categories = request.dbsession.query(Category).all()
+            return {"categories": categories, "addr_id": request.matchdict["add_id"]}
+    except AttributeError:
+        raise exception_response(403)
 
 @view_config(route_name='attribute', renderer='../templates/attributes.jinja2')
 def attributes_view(request):
     """Handle the attributes route."""
-    if request.authenticated_userid:
-        user_id = request.dbsession.query(User).filter(User.username == request.authenticated_userid).first()
-        attributes = request.dbsession.query(Attribute).filter(Attribute.cat_id == request.matchdict["cat_id"]).all()
-        return {"attributes": attributes, "addr_id": request.matchdict["add_id"], "category_id": request.matchdict["cat_id"]}
-    return {}
+    try:
+        if request.authenticated_userid:
+            attributes = request.dbsession.query(Attribute).filter(Attribute.cat_id == request.matchdict["cat_id"]).all()
+            return {"attributes": attributes, "addr_id": request.matchdict["add_id"], "category_id": request.matchdict["cat_id"]}
+    except AttributeError:
+        raise exception_response(403)
+
 
 
 @view_config(route_name='display', renderer='../templates/display.jinja2')

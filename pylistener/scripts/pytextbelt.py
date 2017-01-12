@@ -5,7 +5,7 @@
 import requests
 
 # The Namespace Class
-class Textbelt(object):
+class Textbelt(object):  # pragma: no cover
 
     # API URL
     API_URL = 'http://textbelt.com/'
