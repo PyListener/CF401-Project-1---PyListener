@@ -6,7 +6,7 @@ import transaction
 
 from pyramid import testing
 
-from pylistener.models import User, AddressBook, Category, Attribute, get_tm_session
+from pylistener.models import User, AddressBook, Category, Attribute, UserAttributeLink, get_tm_session
 from pylistener.models.meta import Base
 from passlib.apps import custom_app_context as pwd_context
 
@@ -72,14 +72,6 @@ def test_user(db_session):
     """Instantiate a test user account."""
     new_user = User(username="test", password=pwd_context.hash("test"))
     db_session.add(new_user)
-
-# @pytest.fixture
-# def add_user_models(dummy_request):
-#     """Add a bunch of model instances to the database.
-
-#     Every test that includes this fixture will add new random expenses.
-#     """
-#     dummy_request.dbsession.add_all(EXPENSES)
 
 
 # # ======== UNIT TESTS ==========
@@ -228,98 +220,112 @@ def test_logout_view_redirects(dummy_request):
     result = logout_view(dummy_request)
     assert isinstance(result, HTTPFound)
 
-# def test_create_view_post_request_adds_new_db_items(db_session, dummy_request):
-#     """Posting to the create view twice adds another new item."""
-#     from .views.default import create_view
 
-#     dummy_request.method = "POST"
-#     dummy_request.POST["item"] = "test item"
-#     dummy_request.POST["amount"] = "1234.56"
-#     dummy_request.POST["paid_to"] = "test recipient"
-#     dummy_request.POST["category"] = "rent"
-#     dummy_request.POST["description"] = "test description"
-#     create_view(dummy_request)
-
-#     dummy_request.method = "POST"
-#     dummy_request.POST["item"] = "test item2"
-#     dummy_request.POST["amount"] = "834.00"
-#     dummy_request.POST["paid_to"] = "test recipient2"
-#     dummy_request.POST["category"] = "food"
-#     dummy_request.POST["description"] = "test description2"
-#     create_view(dummy_request)
-
-#     new_expenses = db_session.query(Expense).all()
-#     latest = new_expenses[-1]
-#     assert latest.item == "test item2"
+def test_register_view(dummy_request):
+    """Test that you can see the register view."""
+    from .views.default import register_view
+    result = register_view(dummy_request)
+    assert result == {}
 
 
-# def test_edit_view_returns_expense_info(db_session, dummy_request, add_models):
-#     """GET request to the edit view contains expense item info."""
-#     from .views.default import edit_view
-#     dummy_request.matchdict["id"] = 2
-#     result = edit_view(dummy_request)
-#     expense = db_session.query(Expense).get(2)
-#     assert result["data"]["item"] == expense.item
+def test_register_view_redirects(dummy_request):
+    """Test that when you register you are redirected."""
+    from .views.default import register_view
+    from pyramid.httpexceptions import HTTPFound
+    dummy_request.POST["username"] = "test"
+    dummy_request.POST["password"] = "test"
+    result = register_view(dummy_request)
+    assert isinstance(result, HTTPFound)
 
 
-# def test_edit_view_edits_expense_info(db_session, dummy_request, add_models):
-#     """POST request to the edit view edits expense item info."""
-#     from .views.default import edit_view
-#     dummy_request.matchdict["id"] = 2
-#     dummy_request.POST["item"] = "test item"
-#     dummy_request.POST["amount"] = "1234.56"
-#     dummy_request.POST["paid_to"] = "test recipient"
-#     dummy_request.POST["category"] = "rent"
-#     dummy_request.POST["description"] = "test description"
-#     edit_view(dummy_request)
-#     expense = db_session.query(Expense).get(2)
-#     assert expense.item == "test item"
+def test_manage_view(dummy_request):
+    """Test that you can see the manage view."""
+    from .views.default import manage_view
+    result = manage_view(dummy_request)
+    assert result == {'categories': []}
 
 
-# def test_edit_view_redirects_after_edit(dummy_request, add_models):
-#     """POST request redirects."""
-#     from .views.default import edit_view
-#     from pyramid.httpexceptions import HTTPFound
-#     dummy_request.matchdict["id"] = 2
-#     dummy_request.POST["item"] = "test item"
-#     dummy_request.POST["amount"] = "1234.56"
-#     dummy_request.POST["paid_to"] = "test recipient"
-#     dummy_request.POST["category"] = "rent"
-#     dummy_request.POST["description"] = "test description"
-#     result = edit_view(dummy_request)
-#     assert isinstance(result, HTTPFound)
+def test_not_found_view(dummy_request):
+    """Test not found view."""
+    from .views.notfound import notfound_view
+    result = notfound_view(dummy_request)
+    assert result == {}
 
 
-# def test_category_view_shows_only_one_category(db_session, dummy_request, add_models):
-#     """GET request only shows one category."""
-#     from .views.default import category_view
-#     dummy_request.matchdict["cat"] = "utilities"
-#     result = category_view(dummy_request)
-#     query = db_session.query(Expense).filter(Expense.category == "utilities")
-#     expenses = query.all()
-#     assert result["expenses"] == expenses
+def test_home_view(dummy_request):
+    """Test home view."""
+    from .views.default import home_view
+    result = home_view(dummy_request)
+    assert result == {}
 
 
-# def test_category_view_with_new_category(dummy_request, add_models):
-#     """Test that the list view does return objects when the DB is populated."""
-#     from .views.default import category_view
-#     from pyramid.httpexceptions import HTTPFound
-#     dummy_request.method = "POST"
-#     dummy_request.matchdict["cat"] = "rent"
-#     dummy_request.POST["category"] = "utilities"
-#     result = category_view(dummy_request)
-#     assert isinstance(result, HTTPFound)
+def test_categories_view():
+    """Test category view."""
+    from .views.default import categories_view
+    with pytest.raises(Exception):
+        categories_view(dummy_request)
+
+
+def test_attributes_view():
+    """Test attributes view."""
+    from .views.default import attributes_view
+    with pytest.raises(Exception):
+        attributes_view(dummy_request)
+
+
+# # Unit test for initialize_db  # #
+def test_create_cat_object():
+    """Test create_cat_object returns a Category model."""
+    from .scripts.initializedb import create_cat_object
+    cat_object = create_cat_object("a", "b", "c")
+    assert isinstance(cat_object, Category)
+
+
+def test_create_att_object():
+    """Test create_att_object returns an Attribute model."""
+    from .scripts.initializedb import create_att_object
+    att_object = create_att_object("a", "b", "c", "d")
+    assert isinstance(att_object, Attribute)
+
+
+def test_create_user_object():
+    """Test create_user_object returns a User model."""
+    from .scripts.initializedb import create_user_object
+    user_object = create_user_object("test", "test")
+    assert isinstance(user_object, User)
+
+
+def test_create_address_object():
+    """Test create_address_object returns an AddressBook model."""
+    from .scripts.initializedb import create_address_object
+    address_object = create_address_object("a", "b", "c", "d", "e")
+    assert isinstance(address_object, AddressBook)
+
+
+def test_create_user_att_link_object():
+    """Test create_user_att_link_object returns a UserAttributeLink model."""
+    from .scripts.initializedb import create_user_att_link_object
+    user_att_link_object = create_user_att_link_object("user", "attribute")
+    assert isinstance(user_att_link_object, UserAttributeLink)
+
+
+def test_get_picture_binary():
+    """Test get_picture_binary returns a bytes class."""
+    from .scripts.initializedb import get_picture_binary
+    import os
+    here = os.path.abspath(os.path.dirname(__file__))
+    path = os.path.join(here, 'scripts/img_questions/how.jpg')
+    rb = get_picture_binary(path)
+    assert isinstance(rb, bytes)
+
+
+# # Tests security # #
 
 
 
 
 
-# def test_logout_view_redirects(dummy_request):
-#     """When logging out you get redirected to the home page."""
-#     from .views.default import logout_view
-#     from pyramid.httpexceptions import HTTPFound
-#     result = logout_view(dummy_request)
-#     assert isinstance(result, HTTPFound)
+
 
 
 # def test_delete_view_removes_an_item(db_session, dummy_request, add_models):

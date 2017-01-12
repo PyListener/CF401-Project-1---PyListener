@@ -5,7 +5,6 @@ from pyramid.security import Allow, Authenticated
 from pyramid.session import SignedCookieSessionFactory
 
 from passlib.apps import custom_app_context as pwd_context
-from .models import User
 
 
 class NewRoot(object):
