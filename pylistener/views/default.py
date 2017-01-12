@@ -214,9 +214,9 @@ def display_view(request):
 def picture_handler(request):
     """Serve pictures from database binaries."""
     if request.matchdict["db_id"] == "add":
-        picture_data = request.dbsession.query(AddressBook).get(request.matchdict['pic_id']).picture
+        picture_data = request.dbsession.query(AddressBook).get(request.matchdict['pic_id'])
     elif request.matchdict["db_id"] == "cat":
-        picture_data = request.dbsession.query(Category).get(request.matchdict['pic_id']).picture
+        picture_data = request.dbsession.query(Category).get(request.matchdict['pic_id'])
     elif request.matchdict["db_id"] == "att":
-        picture_data = request.dbsession.query(Attribute).get(request.matchdict['pic_id']).picture
-    return Response(content_type="image/jpg", body=picture_data)
+        picture_data = request.dbsession.query(Attribute).get(request.matchdict['pic_id'])
+    return Response(content_type=picture_data.pic_mime, body=picture_data.picture)
