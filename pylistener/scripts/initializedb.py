@@ -52,8 +52,8 @@ def main(argv=sys.argv):
     with transaction.manager:
         dbsession = get_tm_session(session_factory, transaction.manager)
 
-        test_user = create_user_object("testted", "password")
-        test_user2 = create_user_object("Nurse Jackie", "password1234")
+        test_user = create_user_object("testted", "password", "Tedley Lamar")
+        test_user2 = create_user_object("Nurse Jackie", "password1234", "Charlie")
         dbsession.add(test_user)
         dbsession.add(test_user2)
 
@@ -65,14 +65,16 @@ def main(argv=sys.argv):
                 j_test_contacts[i]["phone"],
                 j_test_contacts[i]["email"],
                 u_id,
-                get_picture_binary(os.path.join(here, j_test_contacts[i]["picture"]))
+                get_picture_binary(os.path.join(here, j_test_contacts[i]["picture"])),
+                j_test_contacts[i]["pic_mime"]
             )
             add_row2 = create_address_object(
                 j_test_contacts[i + 3]["name"],
                 j_test_contacts[i + 3]["phone"],
                 j_test_contacts[i + 3]["email"],
                 u_id2,
-                get_picture_binary(os.path.join(here, j_test_contacts[i + 3]["picture"]))
+                get_picture_binary(os.path.join(here, j_test_contacts[i + 3]["picture"])),
+                j_test_contacts[i]["pic_mime"]
             )
             dbsession.add(add_row)
             dbsession.add(add_row2)
@@ -81,7 +83,8 @@ def main(argv=sys.argv):
             cat_row = create_cat_object(
                 category["label"],
                 category["desc"],
-                get_picture_binary(os.path.join(here, category["picture"]))
+                get_picture_binary(os.path.join(here, category["picture"])),
+                j_data[i]["pic_mime"]
             )
             dbsession.add(cat_row)
             cat_id_query = dbsession.query(Category)
@@ -91,6 +94,7 @@ def main(argv=sys.argv):
                     attribute["label"],
                     attribute["desc"],
                     get_picture_binary(os.path.join(here, attribute["picture"])),
+                    j_data[i]["pic_mime"],
                     cat_id.id
                 )
                 dbsession.add(attr_row)
@@ -108,41 +112,45 @@ def get_picture_binary(path):
         return pic_data.read()
 
 
-def create_cat_object(lbl, des, pic):
+def create_cat_object(lbl, des, pic, pic_mime):
     """Return a Category object with necessary information."""
     return Category(
         label=lbl,
         desc=des,
-        picture=pic
+        picture=pic,
+        pic_mime=pic_mime,
     )
 
 
-def create_att_object(lbl, des, pic, c_id):
+def create_att_object(lbl, des, pic, pic_mime, c_id):
     """Return an Attribute object with given information."""
     return Attribute(
         label=lbl,
         desc=des,
         picture=pic,
+        pic_mime=pic_mime,
         cat_id=c_id
     )
 
 
-def create_user_object(uname, psswd):
+def create_user_object(uname, psswd,sub_u):
     """Return a User object with given information."""
     return User(
         username=uname,
-        password=pwd_context.hash(psswd)
+        password=pwd_context.hash(psswd),
+        sub_user=sub_u
     )
 
 
-def create_address_object(nme, phn, eml, u, pic):
+def create_address_object(nme, phn, eml, u, pic, pic_mime):
     """Return an AddressBook object with given information."""
     return AddressBook(
         name=nme,
         phone=phn,
         email=eml,
         user=u,
-        picture=pic
+        picture=pic,
+        pic_mime=pic_mime,
     )
 
 
