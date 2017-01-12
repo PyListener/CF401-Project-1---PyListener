@@ -15,6 +15,7 @@ from pylistener.scripts.pytextbelt import Textbelt
 import os
 import shutil
 import yagmail
+import mimetypes
 
 
 HERE = os.path.dirname(os.path.realpath(__file__))
@@ -62,76 +63,26 @@ def manage_view(request):
     if request.POST:
         try:
             if request.POST['contact']:
-                name = request.POST["contact_name"]
-                phone = request.POST["contact_phone"]
-                email = request.POST["contact_phone"]
                 input_file = request.POST['contact_img'].file
-                temp_file_path = '/'.join([HERE, name])
-                temp_file_path += '~'
-                input_file.seek(0)
-                with open(temp_file_path, 'wb') as output_file:
-                    shutil.copyfileobj(input_file, output_file)
-                with open(temp_file_path, 'rb') as f:
-                    blob = f.read()
-                    picture = blob
-                os.remove(temp_file_path)
-                user = request.matchdict["id"]
-                user_id = request.dbsession.query(User).filter(User.username == user).first()
-
-                new_contact = AddressBook(
-                    name=name,
-                    phone=phone,
-                    email=email,
-                    picture=picture,
-                    user=user_id.id)
-                request.dbsession.add(new_contact)
+                input_type = mimetypes.guess_type(request.POST['contact_img'].filename)[0]
+                if input_type[:5] == 'image':
+                    handle_new_contact(request, input_file)
+                return {}
         except KeyError:
             try:
                 if request.POST['category']:
-                    label = request.POST["cat_label"]
-                    cat_desc = request.POST["cat_desc"]
                     input_file = request.POST['cat_img'].file
-                    temp_file_path = '/'.join([HERE, label])
-                    temp_file_path += '~'
-                    input_file.seek(0)
-                    with open(temp_file_path, 'wb') as output_file:
-                        shutil.copyfileobj(input_file, output_file)
-                    with open(temp_file_path, 'rb') as f:
-                        blob = f.read()
-                        picture = blob
-                    os.remove(temp_file_path)
-                    new_cat = Category(
-                        label=label,
-                        desc=cat_desc,
-                        picture=picture
-                    )
-                    request.dbsession.add(new_cat)
+                    input_type = mimetypes.guess_type(request.POST['cat_img'].filename)[0]
+                if input_type[:5] == 'image':
+                    handle_new_category(request, input_file)
+                return {}
             except KeyError:
                 if request.POST['attribute']:
-                    label = request.POST["attr_label"]
-                    desc = request.POST["attr_desc"]
-                    category = request.POST["attr_cat"]
-                    input_file = request.POST['attr_img'].file
-                    temp_file_path = '/'.join([HERE, label])
-                    temp_file_path += '~'
-                    input_file.seek(0)
-                    with open(temp_file_path, 'wb') as output_file:
-                        shutil.copyfileobj(input_file, output_file)
-                    with open(temp_file_path, 'rb') as f:
-                        blob = f.read()
-                        picture = blob
-                    os.remove(temp_file_path)
-                    category_query = request.dbsession.query(Category)
-                    category_id = category_query.filter(Category.label == category).first()
-                    new_attr = Attribute(
-                        label=label,
-                        desc=desc,
-                        picture=picture,
-                        cat_id=category_id.id,
-                    )
-                    request.dbsession.add(new_attr)
-    # if request.authenticated_userid:
-    #     user_id = request.authenticated_userid
+                    input_file = request.POST['att_img'].file
+                    input_type = mimetypes.guess_type(request.POST['attr_img'].filename)[0]
+                if input_type[:5] == 'image':
+                    handle_new_attribute(request, input_file)
+                return {}
     query = request.dbsession.query(Category)
     categories = query.all()
     return {"categories": categories}
@@ -219,3 +170,65 @@ def picture_handler(request):
     elif request.matchdict["db_id"] == "att":
         picture_data = request.dbsession.query(Attribute).get(request.matchdict['pic_id']).picture
     return Response(content_type="image/jpg", body=picture_data)
+
+
+def handle_new_contact(request, input_file):
+    """Add new contact to DB."""
+    name = request.POST["contact_name"]
+    phone = request.POST["contact_phone"]
+    email = request.POST["contact_phone"]
+    user = request.matchdict["id"]
+    user_id = request.dbsession.query(User).filter(User.username == user).first()
+    picture = handle_new_picture(name, input_file)
+    new_contact = AddressBook(
+        name=name,
+        phone=phone,
+        email=email,
+        picture=picture,
+        user=user_id.id)
+    request.dbsession.add(new_contact)
+
+
+def handle_new_category(request, input_file):
+    """Add new category to DB."""
+    label = request.POST["cat_label"]
+    cat_desc = request.POST["cat_desc"]
+    picture = handle_new_picture(label, input_file)
+    new_cat = Category(
+        label=label,
+        desc=cat_desc,
+        picture=picture
+    )
+    request.dbsession.add(new_cat)
+
+
+def handle_new_attribute(request, input_file):
+    """Add new attribute to DB."""
+    label = request.POST["attr_label"]
+    desc = request.POST["attr_desc"]
+    category = request.POST["attr_cat"]
+    input_file = request.POST['attr_img'].file
+    picture = handle_new_picture(label, input_file)
+    category_query = request.dbsession.query(Category)
+    category_id = category_query.filter(Category.label == category).first()
+    new_attr = Attribute(
+        label=label,
+        desc=desc,
+        picture=picture,
+        cat_id=category_id.id,
+    )
+    request.dbsession.add(new_attr)
+
+
+def handle_new_picture(name, input_file):
+    """Handle the picture upload and return a BLOB."""
+    temp_file_path = '/'.join([HERE, name])
+    temp_file_path += '~'
+    input_file.seek(0)
+    with open(temp_file_path, 'wb') as output_file:
+        shutil.copyfileobj(input_file, output_file)
+    with open(temp_file_path, 'rb') as f:
+        blob = f.read()
+        picture = blob
+    os.remove(temp_file_path)
+    return picture
