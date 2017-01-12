@@ -80,8 +80,8 @@ h2 {
     font: menu; 
     display: inline-block; 
     padding: 2px 8px;
-    }
 }
+
 .manage_form {
     background: -webkit-linear-gradient(bottom, #97D0A7, #FFFFFF 500px);
     background: -moz-linear-gradient(bottom, #97D0A7, #FFFFFF 500px);
@@ -106,6 +106,7 @@ h2 {
 .manage_form input {
     width: 75%;
 }
+
 .manage_button {
   background-color: #fff;
   width: 375px;
