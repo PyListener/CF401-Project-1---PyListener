@@ -1,6 +1,7 @@
 {% extends 'layout.jinja2' %}
 {% block content %}
 {% if request.authenticated_userid %}
+    <div class="main_container">
     <ul>
         {% for contact in contacts %}
         <li class="list_item">
@@ -11,6 +12,7 @@
         </li>
         {% endfor %}
     </ul>
+    </div>
 {% else %}
   <p>You are not authenticated.</p>
 {% endif %}

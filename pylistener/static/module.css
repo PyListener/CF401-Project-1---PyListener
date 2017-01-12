@@ -19,24 +19,19 @@ nav ul li {
     padding-right: 25px;
 }
 
-/*.main_container {
+.main_container {
     text-align: center;
     }
 
 .main_container ul {
     display: inline-block;
     margin: auto;
-    width: 50%;
     padding: 0;
-    /* For IE, the outcast 
+     For IE, the outcast 
     zoom:1;
     *display: inline;
     }
 
-.main_container li {
-    float: left;
-    padding: 2px 5px;
-    }*/*/
 
 .list_item {
     display: inline-block;
@@ -45,7 +40,9 @@ nav ul li {
     padding: 20px;
     background-color: #97D0A7;
     border-radius: 10px;
-    margin: auto;
+    margin-top: 5px;
+    margin-right: 5px;
+    margin-left: 5px
     line-height: 120px;
 }
 
