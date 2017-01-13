@@ -22,16 +22,21 @@
     <nav>
       <ul>
         <li style="float:left; padding-top:20px">
-          <a href="{{ request.route_url('home') }}"><i class="fa fa-home fa-2x" style="color:white" aria-hidden="true"></i></a>
+          <a href="{{ request.route_url('home') }}"><i class="fa fa-home fa-3x" style="color:white" aria-hidden="true"></i></a>
         </li>
         {% if not request.authenticated_userid %}
+        <div class="login_div">
         <li><a href="{{ request.route_url('login') }}">Log In</a></li>
         <li><a href="{{ request.route_url('register') }}">Register</a></li>
+        </div>
         {% endif %}
       </ul>
       <ul>
         {% if request.authenticated_userid %}
-        <li class=manage_icon  style="padding-top:20px"><a href="{{ request.route_url('manage', id=request.authenticated_userid) }}"><i class="fa fa-cog fa-2x" style="color:white"  aria-hidden="true"></i></a></li>
+        <li style="float:left; padding-top:20px">
+          <a href="{{ request.route_url('logout') }}"><i class="fa fa-sign-out fa-3x" style="color:white" aria-hidden="true"></i></a>
+        </li>
+        <li class="manage_icon" style="padding-top:20px"><a href="{{ request.route_url('manage', id=request.authenticated_userid) }}"><i class="fa fa-cog fa-3x" style="color:white"  aria-hidden="true"></i></a></li>
         {% endif %}
       </ul>
     </nav>

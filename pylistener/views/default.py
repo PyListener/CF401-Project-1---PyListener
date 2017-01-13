@@ -66,7 +66,8 @@ def manage_view(request):
                 input_file = request.POST['contact_img'].file
                 input_type = mimetypes.guess_type(request.POST['contact_img'].filename)[0]
                 if input_type[:5] == 'image':
-                    handle_new_contact(request, input_file)
+                    user_id = request.matchdict["id"]
+                    handle_new_contact(request, input_file, user_id)
                     message = "New Contact Added."
                     request.session.flash(message)
                 else:
@@ -100,10 +101,9 @@ def manage_view(request):
                 return {}
     user = request.dbsession.query(User).filter(User.username == request.authenticated_userid).first().id
     categories = request.dbsession.query(Category).all()
-    attributes = request.dbsession.query(User.username, Attribute.id, Attribute.label, Attribute.desc, Attribute.picture, Attribute.cat_id, UserAttributeLink.priority) \
-        .join(UserAttributeLink.attr_rel) \
-        .filter(User.username == request.authenticated_userid) \
-        .order_by(UserAttributeLink.priority).all()
+    joined = request.dbsession.query(Attribute.id, Attribute.label, Attribute.picture, UserAttributeLink.user_id) \
+        .join(UserAttributeLink, UserAttributeLink.attr_id == Attribute.id)
+    attributes = joined.filter(UserAttributeLink.user_id == user).all()
     contacts = request.dbsession.query(AddressBook).filter(AddressBook.user == user)
     return {"categories": categories, "attributes": set(attributes), "contacts": contacts}
 
@@ -112,15 +112,23 @@ def manage_view(request):
 def register_view(request):
     """Handle the register route."""
     if request.POST:
-        username = request.POST["username"]
-        password = request.POST["password"]
-        sub_user = request.POST["sub_user"]
-        new_user = User(
-            username=username,
-            password=pwd_context.hash(password),
-            sub_user=sub_user
-        )
+        input_file = request.POST['contact_img'].file
+        input_type = mimetypes.guess_type(request.POST['contact_img'].filename)[0]
+        if input_type[:5] != 'image':
+            message = "Please try again with an image file."
+            request.session.flash(message)
+            return {}
+        else:
+            username = request.POST["contact_name"]
+            password = request.POST["password"]
+            sub_user = request.POST["sub_user"]
+            new_user = User(
+                username=username,
+                password=pwd_context.hash(password),
+                sub_user=sub_user
+            )
         request.dbsession.add(new_user)
+        handle_new_contact(request, input_file, username)
         auth_head = remember(request, username)
         return HTTPFound(
             location=request.route_url('manage', id=new_user.username),
@@ -148,10 +156,12 @@ def attributes_view(request):
     """Handle the attributes route."""
     try:
         if request.authenticated_userid:
-            attributes = request.dbsession.query(User.username, Attribute.id, Attribute.label, Attribute.desc, Attribute.picture, Attribute.cat_id, UserAttributeLink.priority) \
-                .join(UserAttributeLink.attr_rel) \
-                .filter(User.username == request.authenticated_userid) \
-                .filter(Attribute.cat_id == request.matchdict["cat_id"]) \
+            user = request.dbsession.query(User)\
+                .filter(User.username == request.authenticated_userid).first().id
+            joined = request.dbsession.query(Attribute.id, Attribute.label, Attribute.picture, Attribute.cat_id, UserAttributeLink.priority, UserAttributeLink.user_id) \
+                .join(UserAttributeLink, UserAttributeLink.attr_id == Attribute.id)
+            attributes = joined.filter(UserAttributeLink.user_id == user)\
+                .filter(Attribute.cat_id == request.matchdict["cat_id"])\
                 .order_by(UserAttributeLink.priority).all()
             return {"attributes": set(attributes), "addr_id": request.matchdict["add_id"], "category_id": request.matchdict["cat_id"]}
     except AttributeError:
@@ -198,7 +208,7 @@ def picture_handler(request):
         picture_data = request.dbsession.query(Category).get(request.matchdict['pic_id'])
     elif request.matchdict["db_id"] == "att":
         picture_data = request.dbsession.query(Attribute).get(request.matchdict['pic_id'])
-    return Response(content_type=picture_data.pic_mime.encode('utf-8'), body=picture_data.picture)
+    return Response(content_type=picture_data.pic_mime, body=picture_data.picture)
 
 
 @view_config(route_name='delete')
@@ -220,12 +230,12 @@ def delete_handler(request):
     return HTTPFound(request.route_url("manage", id=user))
 
 
-def handle_new_contact(request, input_file):
+def handle_new_contact(request, input_file, username):
     """Add new contact to DB."""
     name = request.POST["contact_name"]
     phone = request.POST["contact_phone"]
     email = request.POST["contact_phone"]
-    user = request.matchdict["id"]
+    user = username
     user_id = request.dbsession.query(User).filter(User.username == user).first()
     picture = handle_new_picture(name, input_file)
     new_contact = AddressBook(
