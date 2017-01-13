@@ -195,7 +195,7 @@ def picture_handler(request):
         picture_data = request.dbsession.query(Category).get(request.matchdict['pic_id'])
     elif request.matchdict["db_id"] == "att":
         picture_data = request.dbsession.query(Attribute).get(request.matchdict['pic_id'])
-    return Response(content_type=picture_data.pic_mime, body=picture_data.picture)
+    return Response(content_type=picture_data.pic_mime.encode('utf-8'), body=picture_data.picture)
 
 
 @view_config(route_name='delete')
