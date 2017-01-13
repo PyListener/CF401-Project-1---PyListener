@@ -3,36 +3,42 @@
         "name": "Joe Schmoe",
         "phone": "(555) 555-5555",
         "email": "oops@whoops.com",
-        "picture": "img_address/joe.jpg"
+        "picture": "img_address/joe.jpg",
+        "pic_mime": "image/jpeg"
     },
     {
         "name": "Danny Devito",
         "phone": "(555) 555-5556",
         "email": "short@loud.com",
-        "picture": "img_address/danny_devito.jpg"
+        "picture": "img_address/danny_devito.jpg",
+        "pic_mime": "image/jpeg"
     },
     {
         "name": "Mary Poppins",
         "phone": "+44 303 123 7300",
         "email": "antiquated@adventure.com",
-        "picture": "img_address/mary.jpg"
+        "picture": "img_address/mary.jpg",
+        "pic_mime": "image/jpeg"
     },
     {
         "name": "Zer0 Cool",
         "phone": "(360) 550-3355",
         "email": "hack@planet.com",
-        "picture": "img_address/zero_cool.jpg"
+        "picture": "img_address/zero_cool.jpg",
+        "pic_mime": "image/jpeg"
     },
     {
         "name": "The Dude",
         "phone": "(555) 555-5555",
         "email": "the@dude.abides",
-        "picture": "img_address/the_dude.jpg"
+        "picture": "img_address/the_dude.jpg",
+        "pic_mime": "image/jpeg"
     },
     {
         "name": "Tig Notaro",
         "phone": "(555) 123-4567",
         "email": "still@alive.com",
-        "picture": "img_address/tig.jpg"
+        "picture": "img_address/tig.jpg",
+        "pic_mime": "image/jpeg"
     }
 ]

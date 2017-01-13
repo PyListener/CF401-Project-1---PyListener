@@ -6,11 +6,32 @@ nav {
     width: 100%;
     height: 80px;
     margin-bottom: 20px;
+    display: inline-block;
+}
+
+nav ul li {
+    padding-left: 25px;
+    padding-top: 40%;
 }
 
 .manage_icon {
     float: right;
+    padding-right: 25px;
 }
+
+.main_container {
+    text-align: center;
+    }
+
+.main_container ul {
+    display: inline-block;
+    margin: auto;
+    padding: 0;
+     For IE, the outcast 
+    zoom:1;
+    *display: inline;
+    }
+
 
 .list_item {
     display: inline-block;
@@ -19,7 +40,9 @@ nav {
     padding: 20px;
     background-color: #97D0A7;
     border-radius: 10px;
-    margin: auto;
+    margin-top: 5px;
+    margin-right: 5px;
+    margin-left: 5px
     line-height: 120px;
 }
 
@@ -40,5 +63,62 @@ nav {
 }
 
 .link_item {
-    display: block;
+    display: inline-block;
+}
+
+
+h2 {
+  text-align: center;
+}
+
+.display_main {
+    text-align: center;
+}
+
+.display_main form {
+    text-decoration: none; 
+    font: menu; 
+    display: inline-block; 
+    padding: 2px 8px;
+}
+
+.manage_form {
+    background: -webkit-linear-gradient(bottom, #97D0A7, #FFFFFF 500px);
+    background: -moz-linear-gradient(bottom, #97D0A7, #FFFFFF 500px);
+    background: linear-gradient(bottom, #97D0A7, #FFFFFF 500px);
+    margin: auto;
+    position: relative;
+    width: 550px;
+    height: 325px;
+    font-size: 14px;
+    line-height: 24px;
+    color: #009999;
+    text-decoration: none;
+    border-radius: 10px;
+    padding: 10px;
+    border: 1px solid #999;
+    border: inset 1px solid #333;
+    -webkit-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+}
+
+.manage_form input {
+    width: 75%;
+}
+
+.manage_button {
+  background-color: #fff;
+  width: 375px;
+  display: block;
+  border: 1px solid #999;
+  height: 25px;
+  -webkit-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);
+}
+
+.manage_button:hover {
+  background: #009999;
+  color: #fff;
 }

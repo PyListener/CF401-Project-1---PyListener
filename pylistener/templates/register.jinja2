@@ -2,10 +2,12 @@
 {% block content %}
 <form method="POST">
     <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
-    <label>Username:</label>
+    <label>Guardian's Name:</label>
     <input type="text" name="username">
     <label>Password:</label>
     <input type="password" name="password">
+    <label>User's Name:</label>
+    <input type="text" name="sub_user">
     <button type="submit">Register</button>
 </form>
 {% endblock content%}

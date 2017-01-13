@@ -21,23 +21,24 @@
   <body>
     <nav>
       <ul>
-        <li>
-          <a href="{{ request.route_url('home') }}"><i class="fa fa-home fa-2x" aria-hidden="true"></i></a>
+        <li style="float:left; padding-top:20px">
+          <a href="{{ request.route_url('home') }}"><i class="fa fa-home fa-2x" style="color:white" aria-hidden="true"></i></a>
         </li>
         {% if not request.authenticated_userid %}
         <li><a href="{{ request.route_url('login') }}">Log In</a></li>
         <li><a href="{{ request.route_url('register') }}">Register</a></li>
         {% endif %}
       </ul>
-      <!-- Not sure how to pull userid; see also routes.py and module.css -->
-      <ul class=manage_icon>
-        <li><a href="{{ request.route_url('manage', user_id=request.authenticated_userid) }}"><i class="fa fa-cog fa-2x" aria-hidden="true"></i></a></li>
+      <ul>
+        {% if request.authenticated_userid %}
+        <li class=manage_icon  style="padding-top:20px"><a href="{{ request.route_url('manage', id=request.authenticated_userid) }}"><i class="fa fa-cog fa-2x" style="color:white"  aria-hidden="true"></i></a></li>
+        {% endif %}
       </ul>
     </nav>
     {% block content %}
     {% endblock content %}
-
     <script src="https://use.fontawesome.com/927692b4ce.js"></script>
     <script src="//oss.maxcdn.com/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="{{request.static_url('pylistener:static/delete.js')}}"></script>
   </body>
 </html>

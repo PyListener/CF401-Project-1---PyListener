@@ -1,7 +1,8 @@
 {% extends 'layout.jinja2' %}
 {% block content %}
+<div class="display_main">
 <h1>{{content}}</h1>
-
+<br />
 <form method="POST" id="send_email">
     <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
     <input type="submit" value="Send Email" name="email">
@@ -11,4 +12,5 @@
     <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
     <input type="submit" value="Send SMS" name="sms">
 </form>
+</div>
 {% endblock %}

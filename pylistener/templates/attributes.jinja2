@@ -1,6 +1,7 @@
 {% extends 'layout.jinja2' %}
 {% block content %}
 {% if request.authenticated_userid %}
+    <div class="main_container">
     <ul>
         {% for attribute in attributes %}
         <li class="list_item">
@@ -11,6 +12,7 @@
         </li>
         {% endfor %}
     </ul>
+    </div>
 {% else %}
   <a href="{{ request.route_url('login')}}">Log In</a>
   <a href="{{ request.route_url('register')}}">Register</a>
