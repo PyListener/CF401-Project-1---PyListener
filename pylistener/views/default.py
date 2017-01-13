@@ -214,8 +214,8 @@ def picture_handler(request):
         picture_data = request.dbsession.query(Attribute).get(request.matchdict['pic_id'])
 
     mime_type = picture_data.pic_mime
-    if sys.version_info[0] < 2:
-        mime_type = mime_type.encode('utf-8')
+    # if sys.version_info[0] < 2:
+    mime_type = mime_type.encode('utf-8')
 
     return Response(content_type=mime_type, body=picture_data.picture)
 
