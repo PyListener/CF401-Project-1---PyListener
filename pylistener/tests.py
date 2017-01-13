@@ -314,6 +314,18 @@ def test_get_picture_binary():
     rb = get_picture_binary(path)
     assert isinstance(rb, bytes)
 
+
+def test_handle_new_picture():
+    """Test handle new picture function returns a bytes class."""
+    import os
+    from .views.default import handle_new_picture
+    here = os.path.abspath(os.path.dirname(__file__))
+    path = os.path.join(here, 'scripts/img_questions/how.jpg')
+    with open(path, 'rb') as ouput_file:
+        new_picture = handle_new_picture("name", ouput_file)
+    assert isinstance(new_picture, bytes)
+
+
 # # ======== FUNCTIONAL TESTS ===========
 
 
@@ -331,7 +343,16 @@ def testapp(request):
     test application.
     """
     from webtest import TestApp
-    from pylistener import main
+    from pyramid.config import Configurator
+
+    def main(global_config, **settings):
+        config = Configurator(settings=settings)
+        config.include('pyramid_jinja2')
+        config.include('.models')
+        config.include('.routes')
+        config.include('.security')
+        config.scan()
+        return config.make_wsgi_app()
 
     app = main({}, **{'sqlalchemy.url': TEST_DB})
     testapp = TestApp(app)
