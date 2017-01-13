@@ -236,15 +236,9 @@ def test_register_view_redirects(dummy_request):
     from pyramid.httpexceptions import HTTPFound
     dummy_request.POST["username"] = "test"
     dummy_request.POST["password"] = "test"
+    dummy_request.POST["sub_user"] = "test"
     result = register_view(dummy_request)
     assert isinstance(result, HTTPFound)
-
-
-def test_manage_view(dummy_request):
-    """Test that you can see the manage view."""
-    from .views.default import manage_view
-    result = manage_view(dummy_request)
-    assert result == {'categories': []}
 
 
 def test_not_found_view(dummy_request):
@@ -279,28 +273,28 @@ def test_attributes_view():
 def test_create_cat_object():
     """Test create_cat_object returns a Category model."""
     from .scripts.initializedb import create_cat_object
-    cat_object = create_cat_object("a", "b", "c")
+    cat_object = create_cat_object("a", "b", "c", "c")
     assert isinstance(cat_object, Category)
 
 
 def test_create_att_object():
     """Test create_att_object returns an Attribute model."""
     from .scripts.initializedb import create_att_object
-    att_object = create_att_object("a", "b", "c", "d")
+    att_object = create_att_object("a", "b", "c", "d", "c")
     assert isinstance(att_object, Attribute)
 
 
 def test_create_user_object():
     """Test create_user_object returns a User model."""
     from .scripts.initializedb import create_user_object
-    user_object = create_user_object("test", "test")
+    user_object = create_user_object("test", "test", "test")
     assert isinstance(user_object, User)
 
 
 def test_create_address_object():
     """Test create_address_object returns an AddressBook model."""
     from .scripts.initializedb import create_address_object
-    address_object = create_address_object("a", "b", "c", "d", "e")
+    address_object = create_address_object("a", "b", "c", "d", "e", "f")
     assert isinstance(address_object, AddressBook)
 
 
@@ -320,6 +314,18 @@ def test_get_picture_binary():
     rb = get_picture_binary(path)
     assert isinstance(rb, bytes)
 
+
+def test_handle_new_picture():
+    """Test handle new picture function returns a bytes class."""
+    import os
+    from .views.default import handle_new_picture
+    here = os.path.abspath(os.path.dirname(__file__))
+    path = os.path.join(here, 'scripts/img_questions/how.jpg')
+    with open(path, 'rb') as ouput_file:
+        new_picture = handle_new_picture("name", ouput_file)
+    assert isinstance(new_picture, bytes)
+
+
 # # ======== FUNCTIONAL TESTS ===========
 
 
@@ -337,7 +343,16 @@ def testapp(request):
     test application.
     """
     from webtest import TestApp
-    from pylistener import main
+    from pyramid.config import Configurator
+
+    def main(global_config, **settings):
+        config = Configurator(settings=settings)
+        config.include('pyramid_jinja2')
+        config.include('.models')
+        config.include('.routes')
+        config.include('.security')
+        config.scan()
+        return config.make_wsgi_app()
 
     app = main({}, **{'sqlalchemy.url': TEST_DB})
     testapp = TestApp(app)
@@ -369,7 +384,7 @@ def login_fixture(testapp, new_user):
 
 
 @pytest.fixture
-def fill_the_db(testapp):
+def fill_the_db(testapp, new_user):
     """Fill the database with a contact, category and attribute."""
     from .scripts.initializedb import get_picture_binary
     import os
@@ -382,20 +397,24 @@ def fill_the_db(testapp):
             name="user name",
             phone="user phone",
             email="user email",
-            picture=picture
+            picture=picture,
+            pic_mime="image/jpeg",
+            user=1
         )
         dbsession.add(new_user)
         new_category = Category(
             label="category label",
             desc="desc",
             picture=picture,
+            pic_mime="image/jpeg"
         )
         dbsession.add(new_category)
         new_attribute = Attribute(
             label="attribute label",
             desc="description label",
             picture=picture,
-            cat_id=1
+            cat_id=1,
+            pic_mime="image/jpeg"
         )
         dbsession.add(new_attribute)
 
@@ -435,7 +454,7 @@ def test_home_view_authenticated(testapp, login_fixture):
 def test_home_authenticated_has_contacts(testapp, fill_the_db, login_fixture):
     """Test home views renders contacts when authenticated."""
     response = testapp.get('/', params=login_fixture).html
-    assert len(response.find_all("ul")) == 1
+    assert len(response.find_all("img")) == 1
 
 
 def test_attribute_view_authenticated(testapp, fill_the_db, login_fixture):
@@ -444,10 +463,10 @@ def test_attribute_view_authenticated(testapp, fill_the_db, login_fixture):
     assert response.status_code == 200
 
 
-def test_attribute_authenticated_has_attributes(testapp, fill_the_db, login_fixture):
-    """Test attribute view renders attributes when authenticated."""
-    response = testapp.get('/attribute/1/1', params=login_fixture)
-    assert len(response.html.find_all("img")) == 1
+# def test_attribute_authenticated_has_attributes(testapp, login_fixture, fill_the_db):
+#     """Test attribute view renders attributes when authenticated."""
+#     response = testapp.get('/attribute/1/1', params=login_fixture)
+#     assert len(response.html.find_all("img")) == 1
 
 
 def test_display_view_authenticated(testapp, fill_the_db, login_fixture):
