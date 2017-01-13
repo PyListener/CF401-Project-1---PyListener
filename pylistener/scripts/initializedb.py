@@ -94,7 +94,7 @@ def main(argv=sys.argv):
                     attribute["label"],
                     attribute["desc"],
                     get_picture_binary(os.path.join(here, attribute["picture"])),
-                    j_data[i]["pic_mime"],
+                    attribute["pic_mime"],
                     cat_id.id
                 )
                 dbsession.add(attr_row)

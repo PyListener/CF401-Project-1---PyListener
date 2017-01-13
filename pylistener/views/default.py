@@ -11,11 +11,15 @@ from pyramid.security import remember, forget
 
 from pylistener.models import User, AddressBook, Category, Attribute, UserAttributeLink
 from pylistener.scripts.pytextbelt import Textbelt
+from pylistener.scripts.initializedb import create_att_object, create_user_att_link_object, get_picture_binary
+
 
 import os
+import sys
 import shutil
 import yagmail
 import mimetypes
+import json
 
 
 HERE = os.path.dirname(os.path.realpath(__file__))
@@ -67,38 +71,39 @@ def manage_view(request):
                 input_type = mimetypes.guess_type(request.POST['contact_img'].filename)[0]
                 if input_type[:5] == 'image':
                     user_id = request.matchdict["id"]
-                    handle_new_contact(request, input_file, user_id)
+                    handle_new_contact(request, input_file, input_type, user_id)
                     message = "New Contact Added."
                     request.session.flash(message)
                 else:
                     message = "Please try again with an image file."
                     request.session.flash(message)
-            return {}
+            return HTTPFound(location=request.route_url('manage', id=request.matchdict["id"]))
         except KeyError:
             try:
                 if request.POST['category']:
                     input_file = request.POST['cat_img'].file
                     input_type = mimetypes.guess_type(request.POST['cat_img'].filename)[0]
                 if input_type[:5] == 'image':
-                    handle_new_category(request, input_file)
+                    handle_new_category(request, input_file, input_type)
                     message = "New Category Added. Don't forget Attributes!"
                     request.session.flash(message)
                 else:
                     message = "Please try again with an image file."
                     request.session.flash(message)
-                return {}
+                return HTTPFound(location=request.route_url('manage', id=request.matchdict["id"]))
             except KeyError:
                 if request.POST['attribute']:
                     input_file = request.POST['att_img'].file
                     input_type = mimetypes.guess_type(request.POST['attr_img'].filename)[0]
                 if input_type[:5] == 'image':
-                    handle_new_attribute(request, input_file)
+                    handle_new_attribute(request, input_file, input_type)
                     message = "New Attribute Added."
                     request.session.flash(message)
                 else:
                     message = "Please try again with an image file."
                     request.session.flash(message)
-                return {}
+                return HTTPFound(location=request.route_url('manage', id=request.matchdict["id"]))
+
     user = request.dbsession.query(User).filter(User.username == request.authenticated_userid).first().id
     categories = request.dbsession.query(Category).all()
     joined = request.dbsession.query(Attribute.id, Attribute.label, Attribute.picture, UserAttributeLink.user_id) \
@@ -128,7 +133,8 @@ def register_view(request):
                 sub_user=sub_user
             )
         request.dbsession.add(new_user)
-        handle_new_contact(request, input_file, username)
+        handle_new_contact(request, input_file, input_type, username)
+        initialize_new_user(username, request)
         auth_head = remember(request, username)
         return HTTPFound(
             location=request.route_url('manage', id=new_user.username),
@@ -208,7 +214,12 @@ def picture_handler(request):
         picture_data = request.dbsession.query(Category).get(request.matchdict['pic_id'])
     elif request.matchdict["db_id"] == "att":
         picture_data = request.dbsession.query(Attribute).get(request.matchdict['pic_id'])
-    return Response(content_type=picture_data.pic_mime.encode('utf-8'), body=picture_data.picture)
+
+    mime_type = picture_data.pic_mime
+    if sys.version_info[0] < 3:
+        mime_type = mime_type.encode('utf-8')
+
+    return Response(content_type=mime_type, body=picture_data.picture)
 
 
 @view_config(route_name='delete')
@@ -229,7 +240,7 @@ def delete_handler(request):
     return HTTPFound(request.route_url("manage", id=user))
 
 
-def handle_new_contact(request, input_file, username):
+def handle_new_contact(request, input_file, input_type, username):
     """Add new contact to DB."""
     name = request.POST["contact_name"]
     phone = request.POST["contact_phone"]
@@ -242,11 +253,12 @@ def handle_new_contact(request, input_file, username):
         phone=phone,
         email=email,
         picture=picture,
+        pic_mime=input_type,
         user=user_id.id)
     request.dbsession.add(new_contact)
 
 
-def handle_new_category(request, input_file):
+def handle_new_category(request, input_file, input_type):
     """Add new category to DB."""
     label = request.POST["cat_label"]
     cat_desc = request.POST["cat_desc"]
@@ -254,12 +266,13 @@ def handle_new_category(request, input_file):
     new_cat = Category(
         label=label,
         desc=cat_desc,
-        picture=picture
+        picture=picture,
+        pic_mime=input_type
     )
     request.dbsession.add(new_cat)
 
 
-def handle_new_attribute(request, input_file):
+def handle_new_attribute(request, input_file, input_type):
     """Add new attribute to DB."""
     label = request.POST["attr_label"]
     desc = request.POST["attr_desc"]
@@ -272,6 +285,7 @@ def handle_new_attribute(request, input_file):
         label=label,
         desc=desc,
         picture=picture,
+        pic_mime=input_type,
         cat_id=category_id.id,
     )
     request.dbsession.add(new_attr)
@@ -289,3 +303,30 @@ def handle_new_picture(name, input_file):
         picture = blob
     os.remove(temp_file_path)
     return picture
+
+
+def initialize_new_user(username, request):
+    """Initialize attribute set for new user."""
+    u_id = request.dbsession.query(User)\
+        .filter(User.username == username).first().id
+
+    with open(os.path.join(HERE, '../scripts/data.json')) as data:
+        json_data = data.read()
+        j_data = json.loads(json_data)
+
+    for cat in j_data:
+        cat_id_query = request.dbsession.query(Category)
+        cat_id = cat_id_query.filter(Category.label == cat["label"]).first()
+        for attribute in cat["attributes"]:
+            attr_row = create_att_object(
+                attribute["label"],
+                attribute["desc"],
+                get_picture_binary(os.path.join(HERE, "../scripts/" + attribute["picture"])),
+                attribute["pic_mime"],
+                cat_id.id
+            )
+            request.dbsession.add(attr_row)
+            attr_id = request.dbsession.query(Attribute).filter(Attribute.label == attribute["label"]).first().id
+
+            link_row = create_user_att_link_object(u_id, attr_id)
+            request.dbsession.add(link_row)
