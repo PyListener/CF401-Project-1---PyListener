@@ -50,14 +50,14 @@ def login_view(request):
     return {}
 
 
-@view_config(route_name='logout', permission="manage")
+@view_config(route_name='logout')
 def logout_view(request):
     """Handle the logout route."""
     auth_head = forget(request)
     return HTTPFound(location=request.route_url("home"), headers=auth_head)
 
 
-@view_config(route_name='manage', renderer='../templates/manage.jinja2')
+@view_config(route_name='manage', renderer='../templates/manage.jinja2', permission="manage")
 def manage_view(request):
     """Manage user uploads."""
     if request.POST:
@@ -121,7 +121,10 @@ def register_view(request):
             sub_user=sub_user
         )
         request.dbsession.add(new_user)
-        return HTTPFound(location=request.route_url('manage', id=new_user.username))
+        auth_head = remember(request, username)
+        return HTTPFound(
+            location=request.route_url('manage', id=new_user.username),
+            headers=auth_head)
     return {}
 
 
