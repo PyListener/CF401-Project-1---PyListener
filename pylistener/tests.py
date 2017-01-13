@@ -230,15 +230,15 @@ def test_register_view(dummy_request):
     assert result == {}
 
 
-def test_register_view_redirects(dummy_request):
-    """Test that when you register you are redirected."""
-    from .views.default import register_view
-    from pyramid.httpexceptions import HTTPFound
-    dummy_request.POST["username"] = "test"
-    dummy_request.POST["password"] = "test"
-    dummy_request.POST["sub_user"] = "test"
-    result = register_view(dummy_request)
-    assert isinstance(result, HTTPFound)
+# def test_register_view_redirects(dummy_request):
+#     """Test that when you register you are redirected."""
+#     from .views.default import register_view
+#     from pyramid.httpexceptions import HTTPFound
+#     dummy_request.POST["username"] = "test"
+#     dummy_request.POST["password"] = "test"
+#     dummy_request.POST["sub_user"] = "test"
+#     result = register_view(dummy_request)
+#     assert isinstance(result, HTTPFound)
 
 
 def test_not_found_view(dummy_request):
