@@ -35,7 +35,7 @@
             <div class="manage_link_item">
                 <img src="{{ request.route_url('picture', db_id='add', pic_id=contact.id) }}">
                 <p>{{ contact.name }}</p>
-                <a data-id="{{contact.id}}" href="#">DELETE</a>
+                <a href="#" class="del_contact" data-id="{{contact.id}}">DELETE</a>
             </div>
         </li>
         {% endfor %}
