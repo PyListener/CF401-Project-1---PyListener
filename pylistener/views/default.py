@@ -50,14 +50,14 @@ def login_view(request):
     return {}
 
 
-@view_config(route_name='logout', permission="manage")
+@view_config(route_name='logout')
 def logout_view(request):
     """Handle the logout route."""
     auth_head = forget(request)
     return HTTPFound(location=request.route_url("home"), headers=auth_head)
 
 
-@view_config(route_name='manage', renderer='../templates/manage.jinja2')
+@view_config(route_name='manage', renderer='../templates/manage.jinja2', permission="manage")
 def manage_view(request):
     """Manage user uploads."""
     if request.POST:
@@ -101,10 +101,9 @@ def manage_view(request):
                 return {}
     user = request.dbsession.query(User).filter(User.username == request.authenticated_userid).first().id
     categories = request.dbsession.query(Category).all()
-    attributes = request.dbsession.query(User.username, Attribute.id, Attribute.label, Attribute.desc, Attribute.picture, Attribute.cat_id, UserAttributeLink.priority) \
-        .join(UserAttributeLink.attr_rel) \
-        .filter(User.username == request.authenticated_userid) \
-        .order_by(UserAttributeLink.priority).all()
+    joined = request.dbsession.query(Attribute.id, Attribute.label, Attribute.picture, UserAttributeLink.user_id) \
+        .join(UserAttributeLink, UserAttributeLink.attr_id == Attribute.id)
+    attributes = joined.filter(UserAttributeLink.user_id == user).all()
     contacts = request.dbsession.query(AddressBook).filter(AddressBook.user == user)
     return {"categories": categories, "attributes": set(attributes), "contacts": contacts}
 
@@ -131,7 +130,6 @@ def register_view(request):
         request.dbsession.add(new_user)
         handle_new_contact(request, input_file, username)
         auth_head = remember(request, username)
-
         return HTTPFound(
             location=request.route_url('manage', id=new_user.username),
             headers=auth_head)
@@ -158,10 +156,12 @@ def attributes_view(request):
     """Handle the attributes route."""
     try:
         if request.authenticated_userid:
-            attributes = request.dbsession.query(User.username, Attribute.id, Attribute.label, Attribute.desc, Attribute.picture, Attribute.cat_id, UserAttributeLink.priority) \
-                .join(UserAttributeLink.attr_rel) \
-                .filter(User.username == request.authenticated_userid) \
-                .filter(Attribute.cat_id == request.matchdict["cat_id"]) \
+            user = request.dbsession.query(User)\
+                .filter(User.username == request.authenticated_userid).first().id
+            joined = request.dbsession.query(Attribute.id, Attribute.label, Attribute.picture, Attribute.cat_id, UserAttributeLink.priority, UserAttributeLink.user_id) \
+                .join(UserAttributeLink, UserAttributeLink.attr_id == Attribute.id)
+            attributes = joined.filter(UserAttributeLink.user_id == user)\
+                .filter(Attribute.cat_id == request.matchdict["cat_id"])\
                 .order_by(UserAttributeLink.priority).all()
             return {"attributes": set(attributes), "addr_id": request.matchdict["add_id"], "category_id": request.matchdict["cat_id"]}
     except AttributeError:
