@@ -66,7 +66,8 @@ def manage_view(request):
                 input_file = request.POST['contact_img'].file
                 input_type = mimetypes.guess_type(request.POST['contact_img'].filename)[0]
                 if input_type[:5] == 'image':
-                    handle_new_contact(request, input_file)
+                    user_id = request.matchdict["id"]
+                    handle_new_contact(request, input_file, user_id)
                     message = "New Contact Added."
                     request.session.flash(message)
                 else:
@@ -112,16 +113,28 @@ def manage_view(request):
 def register_view(request):
     """Handle the register route."""
     if request.POST:
-        username = request.POST["username"]
-        password = request.POST["password"]
-        sub_user = request.POST["sub_user"]
-        new_user = User(
-            username=username,
-            password=pwd_context.hash(password),
-            sub_user=sub_user
-        )
+        input_file = request.POST['contact_img'].file
+        input_type = mimetypes.guess_type(request.POST['contact_img'].filename)[0]
+        if input_type[:5] != 'image':
+            message = "Please try again with an image file."
+            request.session.flash(message)
+            return {}
+        else:
+            username = request.POST["contact_name"]
+            password = request.POST["password"]
+            sub_user = request.POST["sub_user"]
+            new_user = User(
+                username=username,
+                password=pwd_context.hash(password),
+                sub_user=sub_user
+            )
         request.dbsession.add(new_user)
-        return HTTPFound(location=request.route_url('manage', id=new_user.username))
+        handle_new_contact(request, input_file, username)
+        auth_head = remember(request, username)
+
+        return HTTPFound(
+            location=request.route_url('manage', id=new_user.username),
+            headers=auth_head)
     return {}
 
 
@@ -217,12 +230,12 @@ def delete_handler(request):
     return HTTPFound(request.route_url("manage", id=user))
 
 
-def handle_new_contact(request, input_file):
+def handle_new_contact(request, input_file, username):
     """Add new contact to DB."""
     name = request.POST["contact_name"]
     phone = request.POST["contact_phone"]
     email = request.POST["contact_phone"]
-    user = request.matchdict["id"]
+    user = username
     user_id = request.dbsession.query(User).filter(User.username == user).first()
     picture = handle_new_picture(name, input_file)
     new_contact = AddressBook(
