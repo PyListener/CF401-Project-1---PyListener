@@ -1,4 +1,4 @@
-"""Test for Pylistener."""
+"""Tests for Pylistener."""
 
 
 import pytest
@@ -102,7 +102,7 @@ def test_attribute_table_empty(db_session):
 
 
 def test_new_user_is_added(db_session):
-    """New user get added to the database."""
+    """Test new user gets added to the database."""
     new_user = User(username="test", password="test")
     db_session.add(new_user)
     query = db_session.query(User).all()
@@ -110,7 +110,7 @@ def test_new_user_is_added(db_session):
 
 
 def test_new_user_username(db_session):
-    """New user has correct data."""
+    """Test new user has correct data."""
     new_user = User(username="test", password="test")
     db_session.add(new_user)
     user = db_session.query(User).filter(User.id == 1).first()
@@ -118,7 +118,7 @@ def test_new_user_username(db_session):
 
 
 def test_new_contact_is_added(db_session):
-    """New contact gets added to correct table."""
+    """Test new contact gets added to correct table."""
     new_contact = AddressBook(
         name="test_name",
         phone="test_phone",
@@ -426,7 +426,7 @@ def test_login_page_has_form(testapp):
 
 
 def test_category_view_not_logged_in(testapp):
-    """Test new-entry route without logging in makes 403 error."""
+    """Test category route without logging in returns 403 error."""
     from webtest.app import AppError
     with pytest.raises(AppError, message="403 Forbidden"):
         testapp.get('/category/1')
@@ -439,7 +439,7 @@ def test_category_view_logged_in(testapp, fill_the_db, login_fixture):
 
 
 def test_404_view(testapp):
-    """Test a non registered route will raise a 404."""
+    """Test a non-registered route will raise a 404."""
     from webtest.app import AppError
     with pytest.raises(AppError, message="404 Not Found"):
         testapp.get('/raise404')
