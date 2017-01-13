@@ -10,3 +10,4 @@ def includeme(config):
     config.add_route('display', '/display/{add_id:\d+}/{cat_id:\d+}/{att_id:\d+}')
     config.add_route('test_img', 'test/{id:\d+}')
     config.add_route('picture', '/pic/{db_id:\w+}/{pic_id:\d+}')
+    config.add_route('delete', '/delete/{id:\d+}')

@@ -100,7 +100,7 @@ def manage_view(request):
                 return {}
     user = request.dbsession.query(User).filter(User.username == request.authenticated_userid).first().id
     categories = request.dbsession.query(Category).all()
-    attributes = attributes = request.dbsession.query(User.username, Attribute.id, Attribute.label, Attribute.desc, Attribute.picture, Attribute.cat_id, UserAttributeLink.priority) \
+    attributes = request.dbsession.query(User.username, Attribute.id, Attribute.label, Attribute.desc, Attribute.picture, Attribute.cat_id, UserAttributeLink.priority) \
         .join(UserAttributeLink.attr_rel) \
         .filter(User.username == request.authenticated_userid) \
         .order_by(UserAttributeLink.priority).all()
@@ -196,6 +196,25 @@ def picture_handler(request):
     elif request.matchdict["db_id"] == "att":
         picture_data = request.dbsession.query(Attribute).get(request.matchdict['pic_id'])
     return Response(content_type=picture_data.pic_mime, body=picture_data.picture)
+
+
+@view_config(route_name='delete')
+def delete_handler(request):
+    """Handle deleting contacts and attributes from manage page."""
+    user = request.authenticated_userid
+    if request.text == "add":
+        address = request.dbsession.query(AddressBook).get(request.matchdict["id"])
+        request.dbsession.delete(address)
+
+    elif request.text == "att":
+        att_id = request.matchdict["id"]
+        user_id = request.dbsession.query(User).filter(User.username == user).first().id
+        attribute = request.dbsession.query(UserAttributeLink) \
+            .filter(UserAttributeLink.user_id == user_id) \
+            .filter(UserAttributeLink.attr_id == att_id).first()
+        request.dbsession.delete(attribute)
+
+    return HTTPFound(request.route_url("manage", id=user))
 
 
 def handle_new_contact(request, input_file):
