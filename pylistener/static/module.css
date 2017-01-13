@@ -1,6 +1,15 @@
 body {
     width: 100%;
 }
+
+body p {
+    text-align: center;
+}
+
+body h1 {
+    text-align: center;
+}
+
 nav {
     background-color: #009999;
     width: 100%;
@@ -14,9 +23,14 @@ nav ul li {
     padding-top: 40%;
 }
 
+.login_div {
+    text-align: left;
+    padding-top: 25px;
+}
+
 .manage_icon {
     float: right;
-    padding-right: 25px;
+    padding-right: 30px;
 }
 
 .main_container {

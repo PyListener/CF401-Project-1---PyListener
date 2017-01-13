@@ -8,7 +8,7 @@
 </div>
 {% endif %}
 
-<h1>Address Book</h1>
+<h1>Address Book</h1><br />
 <form class="manage_form" id="address_book" method="post" accept-charset="utf-8"
       enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
@@ -43,7 +43,7 @@
 </div>
 
 <hr>
-<h1>Categories</h1>
+<h1>Categories</h1><br />
 <form class="manage_form" id="category" method="post" accept-charset="utf-8"
       enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
@@ -61,7 +61,7 @@
     <input class="manage_button" type="submit" value="Add Category" name="category">
 </form>
 <hr>
-<h1>Attributes</h1>
+<h1>Attributes</h1><br />
 <form class="manage_form" id="attribute" method="post" accept-charset="utf-8"
       enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
