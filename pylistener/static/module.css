@@ -185,3 +185,14 @@ h2 {
     text-decoration: none;
     color: red;
 }
+
+.login_form: {
+    background: -webkit-linear-gradient(bottom, #97D0A7, #FFFFFF 35px);
+    background: -moz-linear-gradient(bottom, #97D0A7, #FFFFFF 35px);
+    background: linear-gradient(bottom, #97D0A7, #FFFFFF 35px);
+    color: #009999;
+    width: 75%;
+    margin: auto;
+    border: 1px solid #999;
+    border-radius: 5px;
+}
