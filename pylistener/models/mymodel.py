@@ -30,7 +30,7 @@ class AddressBook(Base):
     phone = Column(Unicode)
     email = Column(Unicode)
     picture = Column(LargeBinary)
-    pic_mime = Column(Unicode)
+    pic_mime = Column(Text)
     user = Column(Integer, ForeignKey('users.id'))
 
 
@@ -40,7 +40,7 @@ class Category(Base):
     label = Column(Unicode)
     desc = Column(Unicode)
     picture = Column(LargeBinary)
-    pic_mime = Column(Unicode)
+    pic_mime = Column(Text)
     children = relationship('Attribute')
 
 
@@ -50,7 +50,7 @@ class Attribute(Base):
     label = Column(Unicode)
     desc = Column(Unicode)
     picture = Column(LargeBinary)
-    pic_mime = Column(Unicode)
+    pic_mime = Column(Text)
     cat_id = Column(Integer, ForeignKey('categories.id'))
     user_assoc_rel = relationship('UserAttributeLink')
 
