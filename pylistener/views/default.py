@@ -11,6 +11,8 @@ from pyramid.security import remember, forget
 
 from pylistener.models import User, AddressBook, Category, Attribute, UserAttributeLink
 from pylistener.scripts.pytextbelt import Textbelt
+from pylistener.scripts.initializedb import create_att_object, create_user_att_link_object, get_picture_binary
+
 
 import os
 import sys
@@ -214,8 +216,8 @@ def picture_handler(request):
         picture_data = request.dbsession.query(Attribute).get(request.matchdict['pic_id'])
 
     mime_type = picture_data.pic_mime
-    # if sys.version_info[0] < 2:
-    mime_type = mime_type.encode('utf-8')
+    if sys.version_info[0] < 3:
+        mime_type = mime_type.encode('utf-8')
 
     return Response(content_type=mime_type, body=picture_data.picture)
 
@@ -328,28 +330,3 @@ def initialize_new_user(username, request):
 
             link_row = create_user_att_link_object(u_id, attr_id)
             request.dbsession.add(link_row)
-
-
-def get_picture_binary(path):
-    """Open an image to save binary data."""
-    with open(path, "rb") as pic_data:
-        return pic_data.read()
-
-
-def create_att_object(lbl, des, pic, pic_mime, c_id):
-    """Return an Attribute object with given information."""
-    return Attribute(
-        label=lbl,
-        desc=des,
-        picture=pic,
-        pic_mime=pic_mime,
-        cat_id=c_id
-    )
-
-
-def create_user_att_link_object(u, att):
-    """Return a UserAttributeLink object with given information."""
-    return UserAttributeLink(
-        user_id=u,
-        attr_id=att
-    )
