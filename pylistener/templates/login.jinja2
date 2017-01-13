@@ -1,11 +1,12 @@
 {% extends 'layout.jinja2' %}
 {% block content %}
-    <form method="POST">
+    <form class="manage_form" method="POST">
       <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
       <label for="username">Username: </label>
       <input type="text" name="username" required>
       <label for="password">Password: </label>
       <input type="password" name="password" required>
-      <button type="submit">Log In</button>
+      <br>
+      <button class="manage_button" type="submit">Log In</button>
     </form>
 {% endblock content %}
