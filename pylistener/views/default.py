@@ -218,7 +218,6 @@ def delete_handler(request):
     if request.text == "add":
         address = request.dbsession.query(AddressBook).get(request.matchdict["id"])
         request.dbsession.delete(address)
-
     elif request.text == "att":
         att_id = request.matchdict["id"]
         user_id = request.dbsession.query(User).filter(User.username == user).first().id
