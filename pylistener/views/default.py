@@ -100,10 +100,9 @@ def manage_view(request):
                 return {}
     user = request.dbsession.query(User).filter(User.username == request.authenticated_userid).first().id
     categories = request.dbsession.query(Category).all()
-    attributes = request.dbsession.query(User.username, Attribute.id, Attribute.label, Attribute.desc, Attribute.picture, Attribute.cat_id, UserAttributeLink.priority) \
-        .join(UserAttributeLink.attr_rel) \
-        .filter(User.username == request.authenticated_userid) \
-        .order_by(UserAttributeLink.priority).all()
+    joined = request.dbsession.query(Attribute.id, Attribute.label, Attribute.picture, UserAttributeLink.user_id) \
+        .join(UserAttributeLink, UserAttributeLink.attr_id == Attribute.id)
+    attributes = joined.filter(UserAttributeLink.user_id == user).all()
     contacts = request.dbsession.query(AddressBook).filter(AddressBook.user == user)
     return {"categories": categories, "attributes": set(attributes), "contacts": contacts}
 
@@ -148,10 +147,12 @@ def attributes_view(request):
     """Handle the attributes route."""
     try:
         if request.authenticated_userid:
-            attributes = request.dbsession.query(User.username, Attribute.id, Attribute.label, Attribute.desc, Attribute.picture, Attribute.cat_id, UserAttributeLink.priority) \
-                .join(UserAttributeLink.attr_rel) \
-                .filter(User.username == request.authenticated_userid) \
-                .filter(Attribute.cat_id == request.matchdict["cat_id"]) \
+            user = request.dbsession.query(User)\
+                .filter(User.username == request.authenticated_userid).first().id
+            joined = request.dbsession.query(Attribute.id, Attribute.label, Attribute.picture, Attribute.cat_id, UserAttributeLink.priority, UserAttributeLink.user_id) \
+                .join(UserAttributeLink, UserAttributeLink.attr_id == Attribute.id)
+            attributes = joined.filter(UserAttributeLink.user_id == user)\
+                .filter(Attribute.cat_id == request.matchdict["cat_id"])\
                 .order_by(UserAttributeLink.priority).all()
             return {"attributes": set(attributes), "addr_id": request.matchdict["add_id"], "category_id": request.matchdict["cat_id"]}
     except AttributeError:
@@ -198,7 +199,7 @@ def picture_handler(request):
         picture_data = request.dbsession.query(Category).get(request.matchdict['pic_id'])
     elif request.matchdict["db_id"] == "att":
         picture_data = request.dbsession.query(Attribute).get(request.matchdict['pic_id'])
-    return Response(content_type=picture_data.pic_mime.encode('utf-8'), body=picture_data.picture)
+    return Response(content_type=picture_data.pic_mime, body=picture_data.picture)
 
 
 @view_config(route_name='delete')
