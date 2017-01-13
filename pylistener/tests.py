@@ -10,7 +10,7 @@ from pylistener.models import User, AddressBook, Category, Attribute, UserAttrib
 from pylistener.models.meta import Base
 from passlib.apps import custom_app_context as pwd_context
 
-TEST_DB = 'postgres://hotsauce@localhost:5432/test_pylistener'
+TEST_DB = 'postgres://maellevance:password@localhost:5432/test_pylistener'
 
 
 @pytest.fixture(scope="session")
