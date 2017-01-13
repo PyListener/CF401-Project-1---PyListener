@@ -27,27 +27,27 @@ nav ul li {
     display: inline-block;
     margin: auto;
     padding: 0;
-     For IE, the outcast 
-    zoom:1;
-    *display: inline;
+/*     For IE, the outcast
+*/  zoom:1;
+    display: inline;
     }
 
 
 .list_item {
     display: inline-block;
-    width: 120px;
-    height: 120px;
+    width: 240px;
+    height: 240px;
     padding: 20px;
     background-color: #97D0A7;
     border-radius: 10px;
     margin-top: 5px;
     margin-right: 5px;
-    margin-left: 5px
+    margin-left: 5px;
     line-height: 120px;
 }
 
 .list_item img{
-    max-height: 120px;
+    max-height: 200px;
     vertical-align: bottom;
 }
 
@@ -66,6 +66,9 @@ nav ul li {
     display: inline-block;
 }
 
+.del_contact a:link {
+    color: black;
+}
 
 h2 {
   text-align: center;
@@ -121,4 +124,50 @@ h2 {
 .manage_button:hover {
   background: #009999;
   color: #fff;
+}
+
+.manage_list_item {
+    display: inline-block;
+    width: 110px;
+    padding: 20px;
+    background-color: #97D0A7;
+    border-radius: 10px;
+    margin-top: 5px;
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+.manage_list_item p {
+    text-align: center;
+    color: black;
+}
+
+/*.del_contact a {
+    text-decoration: none;
+    height: 100%;
+    vertical-align: bottom;
+    color: black;
+}
+*/
+/*.del_contact a:hover {
+    color: red;
+}*/
+
+.manage_link_item {
+    display: inline-block;
+}
+
+.manage_link_item img{
+    max-height: 100px;
+    vertical-align: bottom;
+}
+
+.manage_link_item a:link {
+    text-decoration: none;
+    color: black;
+}
+
+.manage_link_item a:hover {
+    text-decoration: none;
+    color: red;
 }

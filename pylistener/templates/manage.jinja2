@@ -27,14 +27,15 @@
     <br />
     <input class="manage_button" type="submit" value="Add Contact" name="contact">
 </form>
+<br />
 <div class="main_container">
     <ul>
         {% for contact in contacts %}
-        <li class="list_item">
-            <div class="link_item">
+        <li class="manage_list_item">
+            <div class="manage_link_item">
                 <img src="{{ request.route_url('picture', db_id='add', pic_id=contact.id) }}">
                 <p>{{ contact.name }}</p>
-                <a class="del_contact" data-id="{{contact.id}}" href="#">DELETE</a>
+                <a data-id="{{contact.id}}" href="#">DELETE</a>
             </div>
         </li>
         {% endfor %}
@@ -88,8 +89,8 @@
 <div class="main_container">
     <ul>
         {% for attribute in attributes %}
-        <li class="list_item">
-            <div class="link_item">
+        <li class="manage_list_item">
+            <div class="manage_link_item">
                 <img src="{{ request.route_url('picture', db_id='att', pic_id=attribute.id) }}">
                 <p>{{ attribute.label }}</p>
                 <a class="del_att" data-id="{{attribute.id}}" href="#">DELETE</a>
