@@ -10,7 +10,7 @@ from pylistener.models import User, AddressBook, Category, Attribute, UserAttrib
 from pylistener.models.meta import Base
 from passlib.apps import custom_app_context as pwd_context
 
-TEST_DB = 'postgres://maellevance:password@localhost:5432/test_pylistener'
+TEST_DB = 'postgres://CCallahanIV@localhost:5432/test_pylistener'
 
 
 @pytest.fixture(scope="session")
@@ -20,7 +20,7 @@ def configuration(request):
     This Configurator instance sets up a pointer to the location of the
         database.
     It also includes the models from your app's model package.
-    Finally it tears everything down, including the in-memory SQLite database.
+    Finally it tears everything down, including the Postgres database.
 
     This configuration will persist for the entire duration of your PyTest run.
     """
@@ -76,7 +76,7 @@ def test_user(db_session):
     db_session.add(new_user)
 
 
-# # ======== UNIT TESTS ==========
+# ======== UNIT TESTS ==========
 def test_user_table_empty(db_session):
     """Test user table is initially empty."""
     query = db_session.query(User).all()
@@ -479,3 +479,12 @@ def test_display_authenticated_has_string(testapp, fill_the_db, login_fixture):
     """Test display view renders the string when authenticated."""
     response = testapp.get("/display/1/1/1", params=login_fixture)
     assert len(response.html.find_all('h1')) == 1
+
+
+def test_manage_view_get_request(testapp, fill_the_db, login_fixture):
+    """Test the manage view returns three forms."""
+    response = testapp.get('/manage/test', params=login_fixture)
+    assert response.status == '200 OK'
+    assert len(response.html.find_all('form')) == 3
+    assert len(response.html.find_all('li', class_='manage_list_item')) == 1
+
