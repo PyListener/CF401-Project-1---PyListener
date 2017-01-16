@@ -1,3 +1,20 @@
 h1, h2, h3, h4, h5, h6, p, a, form, label {
     font-family: 'Ramabhadra', sans-serif;
 }
+
+.flashes {
+    background: -webkit-linear-gradient(bottom, #97D0A7, #FFFFFF 35px);
+    background: -moz-linear-gradient(bottom, #97D0A7, #FFFFFF 35px);
+    background: linear-gradient(bottom, #97D0A7, #FFFFFF 35px);
+    color: #009999;
+    width: 75%;
+    margin: auto;
+    border: 1px solid #999;
+    border-radius: 5px;
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: medium;
+    padding: 5px;
+    font-weight: bold;
+    font-family: 'Ramabhadra', sans-serif;
+}
