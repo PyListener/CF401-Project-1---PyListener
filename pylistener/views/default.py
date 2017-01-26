@@ -194,11 +194,11 @@ def display_view(request):
             if request.POST['email']:
                 yag = yagmail.SMTP(os.environ['EMAIL'], os.environ['PASSWORD'])
                 print(contact.email)
-                yag.send("maellevance@gmail.com", 'An email from Pylistener', content)
+                yag.send(contact.email, 'An email from Pylistener', content)
                 return HTTPFound(location=request.route_url('home'))
         except KeyError:
             if request.POST['sms']:
-                Recipient = Textbelt.Recipient('2066817287', "us")
+                Recipient = Textbelt.Recipient(contact.phone, "us")
                 print(contact.phone)
                 Recipient.send(content)
                 return HTTPFound(location=request.route_url('home'))
