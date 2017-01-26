@@ -244,7 +244,7 @@ def handle_new_contact(request, input_file, input_type, username):
     """Add new contact to DB."""
     name = request.POST["contact_name"]
     phone = request.POST["contact_phone"]
-    email = request.POST["contact_phone"]
+    email = request.POST["contact_email"]
     user = username
     user_id = request.dbsession.query(User).filter(User.username == user).first()
     picture = handle_new_picture(name, input_file)
