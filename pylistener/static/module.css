@@ -90,14 +90,53 @@ h2 {
 
 .display_main {
     text-align: center;
+    font-size: 3em;
+    margin-top: 7%;
 }
 
 .display_main form {
+    margin-top: 3%;
     text-decoration: none; 
     font: menu; 
     display: inline-block; 
     padding: 2px 8px;
 }
+
+.display_main button {
+  border: 1px solid #777777;
+  background: #009999;
+  color: white;
+  font: bold;
+  font-family: 'Ramabhadra', sans-serif;
+  padding: .5e 2em .5em 2em;
+  margin: 2em 4em 2em 4em;
+  width: 200px;
+  font-size: 25px;
+  cursor: pointer;
+  -moz-border-radius: 15px;
+  -webkit-border-radius: 15px;
+}
+
+.display_main i {
+    display: block;
+    font-size: 50px;
+}
+
+.display_main a {
+    color: #009999;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.display_main a:visited {
+    color: #009999;
+    text-decoration: none;
+}
+
+.display_refresh i {
+    font-size: 100px;
+}
+
 
 .manage_form {
     background: -webkit-linear-gradient(bottom, #97D0A7, #FFFFFF 500px);
