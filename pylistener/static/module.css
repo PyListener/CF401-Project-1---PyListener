@@ -90,9 +90,12 @@ h2 {
 
 .display_main {
     text-align: center;
+    font-size: 3em;
+    margin-top: 7%;
 }
 
 .display_main form {
+    margin-top: 3%;
     text-decoration: none; 
     font: menu; 
     display: inline-block; 
