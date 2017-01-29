@@ -12,5 +12,7 @@
     <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
     <button type="submit" name="sms" value=True> <i class="fa fa-mobile" aria-hidden="true"></i> SMS</button>
 </form>
+
+<a class="display_refresh" href="{{ request.route_url('home') }}"><i class="fa fa-refresh" aria-hidden="true"></i></a>
 </div>
 {% endblock %}
