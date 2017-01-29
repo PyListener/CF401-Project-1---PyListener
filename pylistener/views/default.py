@@ -13,7 +13,6 @@ from pylistener.models import User, AddressBook, Category, Attribute, UserAttrib
 from pylistener.scripts.pytextbelt import Textbelt
 from pylistener.scripts.initializedb import create_att_object, create_user_att_link_object, get_picture_binary
 
-
 import os
 import sys
 import shutil
@@ -150,8 +149,8 @@ def register_view(request):
 def categories_view(request):
     """Handle the categories route."""
     if request.authenticated_userid:
-            categories = request.dbsession.query(Category).all()
-            return {"categories": categories, "addr_id": request.matchdict["add_id"]}
+        categories = request.dbsession.query(Category).all()
+        return {"categories": categories, "addr_id": request.matchdict["add_id"]}
 
 
 @view_config(

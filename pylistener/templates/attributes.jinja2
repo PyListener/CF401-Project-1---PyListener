@@ -2,6 +2,18 @@
 {% block content %}
 {% if request.authenticated_userid %}
     <div class="main_container">
+    <div class="status_bar">
+            <ul>
+                <li class="small_list_item">
+                    <a href="{{ request.route_url('home') }}"><span>Speaking to: </span>
+                    <img src="{{ request.route_url('picture', db_id='add', pic_id=addr_id) }}"></a>
+                </li>
+                <li class="small_list_item">
+                    <a href="{{ request.route_url('category', add_id=addr_id) }}"><span>About: </span>
+                    <img src="{{ request.route_url('picture', db_id='cat', pic_id=category_id ) }}"></a>
+                </li>
+            </ul>
+        </div>
     <ul>
         {% for attribute in attributes %}
         <li class="list_item">

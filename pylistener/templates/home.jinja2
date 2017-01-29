@@ -2,6 +2,8 @@
 {% block content %}
 {% if request.authenticated_userid %}
     <div class="main_container">
+    <h1>With whom would you like to speak?</h1>
+    <br>
     <ul>
         {% for contact in contacts %}
         <li class="list_item">

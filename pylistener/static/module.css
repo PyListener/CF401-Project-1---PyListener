@@ -61,8 +61,13 @@ nav ul li {
 }
 
 .list_item img{
+    display: block;
     max-height: 200px;
+    max-width: 200px;
+    width: auto;
+    height: auto;
     vertical-align: bottom;
+    margin: auto;
 }
 
 .list_item p {
@@ -195,4 +200,43 @@ h2 {
     margin: auto;
     border: 1px solid #999;
     border-radius: 5px;
+}
+
+
+.small_list_item {
+    display: inline-block;
+    width: 120px;
+    height: 80px;
+    padding: 10px;
+    background-color: #97D0A7;
+    border-radius: 6px;
+    margin-top: 5px;
+    margin-right: 5px;
+    margin-left: 5px;
+    line-height: 20px;
+}
+
+.small_list_item img{
+    display: block;
+    max-height: 60px;
+    width: auto;
+    height: auto;
+    vertical-align: bottom;
+    margin: auto;
+}
+
+.small_list_item p {
+    text-align: center;
+    color: black;
+}
+
+.small_list_item a {
+    text-decoration: none;
+    color: black;
+    height: 100%;
+    vertical-align: bottom;
+}
+
+.small_link_item {
+    display: inline-block;
 }
