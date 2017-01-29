@@ -3,6 +3,15 @@
 {% if request.authenticated_userid %}
     <div class="main_container">
     <ul>
+        <div class="status_bar">
+            <ul>
+                <li class="small_list_item">
+                    <a href="{{ request.route_url('home') }}"><span>Speaking to: </span>
+                    <img src="{{ request.route_url('picture', db_id='add', pic_id=addr_id) }}"></a>
+                </li>
+            </ul>
+        </div>
+
         {% for category in categories %}
         <li class="list_item">
             <a class="link_item" href="{{ request.route_url('attribute', add_id=addr_id, cat_id=category.id) }}">

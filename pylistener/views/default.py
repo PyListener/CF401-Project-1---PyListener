@@ -13,7 +13,6 @@ from pylistener.models import User, AddressBook, Category, Attribute, UserAttrib
 from pylistener.scripts.pytextbelt import Textbelt
 from pylistener.scripts.initializedb import create_att_object, create_user_att_link_object, get_picture_binary
 
-
 import os
 import sys
 import shutil
@@ -93,7 +92,7 @@ def manage_view(request):
                 return HTTPFound(location=request.route_url('manage', id=request.matchdict["id"]))
             except KeyError:
                 if request.POST['attribute']:
-                    input_file = request.POST['att_img'].file
+                    input_file = request.POST['attr_img'].file
                     input_type = mimetypes.guess_type(request.POST['attr_img'].filename)[0]
                 if input_type[:5] == 'image':
                     handle_new_attribute(request, input_file, input_type)
@@ -150,8 +149,8 @@ def register_view(request):
 def categories_view(request):
     """Handle the categories route."""
     if request.authenticated_userid:
-            categories = request.dbsession.query(Category).all()
-            return {"categories": categories, "addr_id": request.matchdict["add_id"]}
+        categories = request.dbsession.query(Category).all()
+        return {"categories": categories, "addr_id": request.matchdict["add_id"]}
 
 
 @view_config(
@@ -290,6 +289,13 @@ def handle_new_attribute(request, input_file, input_type):
         cat_id=category_id.id,
     )
     request.dbsession.add(new_attr)
+    user_id = request.dbsession.query(User).filter_by(username=request.authenticated_userid).first().id
+    attr_id = attr_id = request.dbsession.query(Attribute).filter_by(label=label).first().id
+    new_attr_link = UserAttributeLink(
+        user_id=user_id,
+        attr_id=attr_id
+    )
+    request.dbsession.add(new_attr_link)
 
 
 def handle_new_picture(name, input_file):
