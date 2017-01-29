@@ -102,6 +102,24 @@ h2 {
     padding: 2px 8px;
 }
 
+.display_main button {
+  border: 1px solid #777777;
+  background: #009999;
+  color: white;
+  font: bold 20px;
+  font-family: 'Ramabhadra', sans-serif;
+  padding: 2%;
+  width: 100px;
+  margin: 4em;
+  cursor: pointer;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+}
+
+.display_main i {
+    font-size: 50px;
+}
+
 .manage_form {
     background: -webkit-linear-gradient(bottom, #97D0A7, #FFFFFF 500px);
     background: -moz-linear-gradient(bottom, #97D0A7, #FFFFFF 500px);

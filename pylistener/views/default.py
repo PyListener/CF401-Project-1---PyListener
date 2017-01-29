@@ -189,6 +189,7 @@ def display_view(request):
     attribute = request.dbsession.query(Attribute).filter(Attribute.id == att_id).first()
     content = "{0}, you have received a message from {1}. \n\t \"{2} {3}\"" \
         .format(contact.name, user.sub_user, category.desc, attribute.desc)
+    string = "{0}, {1} {2}".format(contact.name, category.desc, attribute.desc)
     if request.POST:
         try:
             if request.POST['email']:
@@ -202,7 +203,7 @@ def display_view(request):
                 print(contact.phone)
                 Recipient.send(content)
                 return HTTPFound(location=request.route_url('home'))
-    return {"content": content}
+    return {"content": string}
 
 
 @view_config(route_name='picture')
