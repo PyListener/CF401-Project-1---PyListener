@@ -93,7 +93,7 @@ def manage_view(request):
                 return HTTPFound(location=request.route_url('manage', id=request.matchdict["id"]))
             except KeyError:
                 if request.POST['attribute']:
-                    input_file = request.POST['att_img'].file
+                    input_file = request.POST['attr_img'].file
                     input_type = mimetypes.guess_type(request.POST['attr_img'].filename)[0]
                 if input_type[:5] == 'image':
                     handle_new_attribute(request, input_file, input_type)
@@ -289,6 +289,13 @@ def handle_new_attribute(request, input_file, input_type):
         cat_id=category_id.id,
     )
     request.dbsession.add(new_attr)
+    user_id = request.dbsession.query(User).filter_by(username=request.authenticated_userid).first().id
+    attr_id = attr_id = request.dbsession.query(Attribute).filter_by(label=label).first().id
+    new_attr_link = UserAttributeLink(
+        user_id=user_id,
+        attr_id=attr_id
+    )
+    request.dbsession.add(new_attr_link)
 
 
 def handle_new_picture(name, input_file):
