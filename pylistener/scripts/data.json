@@ -89,6 +89,10 @@
         "desc": "help.",
         "picture": "img_needs/doctor.jpg",
         "pic_mime": "image/jpeg"
+    }, {
+        "label": "shower",
+        "desc": "to bathe."
+        "picture": "img_needs/shower.png"
     }]
 }, {
     "label": "emotions",
