@@ -186,8 +186,8 @@
     }, {
         "label": "don't know",
         "desc": "I don't know.",
-        "picture": "img_emotions/confused.jpg",
-        "pic_mime": "image/jpeg"
+        "picture": "img_emotions/confused.png",
+        "pic_mime": "image/png"
     }]
 }, {
     "label": "questions",
