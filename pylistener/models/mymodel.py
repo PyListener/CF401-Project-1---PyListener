@@ -12,6 +12,7 @@ from sqlalchemy.orm import relationship
 
 from .meta import Base
 
+
 class User(Base):
     """This class defines a User model."""
     __tablename__ = 'users'
@@ -26,7 +27,7 @@ class User(Base):
 class AddressBook(Base):
     __tablename__ = 'addresses'
     id = Column(Integer, primary_key=True)
-    name = Column(Unicode, unique=True)
+    name = Column(Unicode)
     phone = Column(Unicode)
     email = Column(Unicode)
     picture = Column(LargeBinary)
