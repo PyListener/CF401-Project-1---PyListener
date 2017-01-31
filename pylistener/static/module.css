@@ -18,14 +18,28 @@ nav {
     display: inline-block;
 }
 
-nav ul li {
-    padding-left: 25px;
-    padding-top: 40%;
+nav ul {
+    margin-top: 14px;
+    margin-right: 25px;
 }
 
-.login_div {
-    text-align: left;
-    padding-top: 25px;
+nav ul li {
+    padding-left: 25px;
+}
+
+nav ul li a{
+    color: white;
+    text-decoration: none;
+}
+
+nav ul li a:hover{
+    text-decoration: underline;
+}
+
+nav ul li h1 {
+    float: right;
+    color: white;
+    font-size: 40px;
 }
 
 .manage_icon {
@@ -142,6 +156,9 @@ h2 {
     font-size: 100px;
 }
 
+h1.manageTitle {
+    font-size: 50px;
+}
 
 .manage_form {
     background: -webkit-linear-gradient(bottom, #97D0A7, #FFFFFF 500px);
@@ -166,6 +183,20 @@ h2 {
 
 .manage_form input {
     width: 75%;
+    margin: auto;
+}
+
+.manage_form select{
+    margin-left: 30px;
+    width: 40%;
+}
+
+.manage_form label {
+    margin-left: 12.5%;
+}
+
+.manage_form_title h1{
+    font-size: 60px;
 }
 
 .manage_button {

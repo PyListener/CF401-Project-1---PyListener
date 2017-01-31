@@ -11,7 +11,7 @@
                 </li>
             </ul>
         </div>
-
+        <hr>
         {% for category in categories %}
         <li class="list_item">
             <a class="link_item" href="{{ request.route_url('attribute', add_id=addr_id, cat_id=category.id) }}">
