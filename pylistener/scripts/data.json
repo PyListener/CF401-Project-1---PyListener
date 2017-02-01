@@ -65,11 +65,6 @@
         "picture": "img_needs/food.png",
         "pic_mime": "image/png"
     }, {
-        "label": "drink",
-        "desc": "something to drink.",
-        "picture": "img_needs/drink.jpg",
-        "pic_mime": "image/jpeg"
-    }, {
         "label": "medicine",
         "desc": "my medicine.",
         "picture": "img_needs/medicine.jpg",
@@ -91,8 +86,9 @@
         "pic_mime": "image/jpeg"
     }, {
         "label": "shower",
-        "desc": "to bathe."
-        "picture": "img_needs/shower.png"
+        "desc": "to bathe.",
+        "picture": "img_needs/shower.png",
+        "pic_mime": "image/png"
     }]
 }, {
     "label": "emotions",
@@ -107,8 +103,8 @@
     }, {
         "label": "sad",
         "desc": "sad.",
-        "picture": "img_emotions/sad.jpg",
-        "pic_mime": "image/jpeg"
+        "picture": "img_emotions/sad.png",
+        "pic_mime": "image/png"
     }, {
         "label": "lonely",
         "desc": "lonely.",
@@ -171,7 +167,7 @@
     }, {
         "label": "stop",
         "desc": "please stop.",
-        "picture": "img_tell/no_forbidden_circle_slash.png",
+        "picture": "img_emotions/no_forbidden_circle_slash.png",
         "pic_mime": "image/png"
     }, {
         "label": "yes",
@@ -186,8 +182,8 @@
     }, {
         "label": "don't know",
         "desc": "I don't know.",
-        "picture": "img_emotions/confused.jpg",
-        "pic_mime": "image/jpeg"
+        "picture": "img_emotions/confused.png",
+        "pic_mime": "image/png"
     }]
 }, {
     "label": "questions",
