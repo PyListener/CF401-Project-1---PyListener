@@ -7,25 +7,29 @@
         {% endfor %}
 </div>
 {% endif %}
-
+<h1 class="manageTitle">Configure Application</h1>
+<br>
+<hr>
 <h1>Address Book</h1><br />
 <form class="manage_form" id="address_book" method="post" accept-charset="utf-8"
       enctype="multipart/form-data">
+    <h1 class="manage_form_title">Add Contact</h1>
     <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
 
-    <label for="img">New Contact</label>
+    <label for="contact_img">New Contact Image</label>
     <input name="contact_img" type="file" required>
     <br />
     <label for="contact_name">Name</label>
     <input id="contact_name" name="contact_name" type="text" required>
     <br />
     <label for="contact_phone">Phone</label>
-    <input name="contact_phone" type="text" >
+    <input name="contact_phone" type="text" required>
     <br />
     <label for="contact_email">Email</label>
-    <input name="contact_email" type="text" >
+    <input name="contact_email" type="text" required>
     <br />
     <input class="manage_button" type="submit" value="Add Contact" name="contact">
+    <br>
 </form>
 <br />
 <div class="main_container">
@@ -46,6 +50,7 @@
 <h1>Categories</h1><br />
 <form class="manage_form" id="category" method="post" accept-charset="utf-8"
       enctype="multipart/form-data">
+    <h1 class="manage_form_title">Add Category</h1>
     <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
 
     <label for="cat_img">New Category</label>
@@ -59,29 +64,35 @@
     <br />
 
     <input class="manage_button" type="submit" value="Add Category" name="category">
+    <br>
 </form>
 <hr>
 <h1>Attributes</h1><br />
 <form class="manage_form" id="attribute" method="post" accept-charset="utf-8"
       enctype="multipart/form-data">
+    <h1 class="manage_form_title">Add Attribute</h1>
     <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
 
-    <label for="attr_img">New Attribute</label>
-    <input name="attr_img" type="file">
+    <label for="attr_img">New Attribute Image</label>
+    <input name="attr_img" type="file" required>
     <br />
     <label for="attr_label">Name</label>
-    <input  name="attr_label" type="text">
+    <input  name="attr_label" type="text" required>
+    <br />
+    <label for="attr_cat">Category</label>
     <select name="attr_cat" required>
         {% for category in categories %}
         <option value="{{category.label}}">{{category.label}}</option>
         {% endfor %}
     </select>
     <br />
-    <label for="attr_desc"></label>
-    <input name="attr_desc" type="text">
+    <br />
+    <label for="attr_desc">Description</label>
+    <input name="attr_desc" type="text" required>
     <br />
 
     <input class="manage_button" type="submit" value="Add Attribute" name="attribute">
+    <br>
 </form>
 <br>
 <h2>Current Attributes:</h2>

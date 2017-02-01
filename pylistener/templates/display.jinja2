@@ -5,12 +5,14 @@
 <br />
 <form method="POST" id="send_email">
     <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
-    <input type="submit" value="Send Email" name="email">
+    <button type="submit" name="email" value=True><i class="fa fa-envelope-o" aria-hidden="true"></i> Email</button>
 </form>
 
 <form method="POST" id="send_email">
     <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
-    <input type="submit" value="Send SMS" name="sms">
+    <button type="submit" name="sms" value=True> <i class="fa fa-mobile" aria-hidden="true"></i> SMS</button>
 </form>
+
+<a class="display_refresh" href="{{ request.route_url('home') }}"><i class="fa fa-refresh" aria-hidden="true"></i></a>
 </div>
 {% endblock %}
