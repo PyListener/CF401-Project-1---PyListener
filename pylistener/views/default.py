@@ -10,8 +10,8 @@ from passlib.apps import custom_app_context as pwd_context
 from pyramid.security import remember, forget
 
 from pylistener.models import User, AddressBook, Category, Attribute, UserAttributeLink
-from pylistener.scripts.pytextbelt import Textbelt
 from pylistener.scripts.initializedb import create_att_object, create_user_att_link_object, get_picture_binary
+from twilio.rest import TwilioRestClient
 
 import os
 import sys
@@ -19,6 +19,8 @@ import shutil
 import yagmail
 import mimetypes
 import json
+import requests
+
 
 
 HERE = os.path.dirname(os.path.realpath(__file__))
@@ -198,9 +200,15 @@ def display_view(request):
                 return HTTPFound(location=request.route_url('home'))
         except KeyError:
             if request.POST['sms']:
-                Recipient = Textbelt.Recipient(contact.phone, "us")
-                print(contact.phone)
-                Recipient.send(content)
+                account_sid = os.environ["TWILIO_SID"]
+                auth_token = os.environ["TWILIO_TOKEN"]
+                twilio_number = os.environ["TWILIO_NUMBER"]
+                client = TwilioRestClient(account_sid, auth_token)
+                client.messages.create(
+                    to='+1' + contact.phone,
+                    from_=twilio_number,
+                    body=content
+                )
                 return HTTPFound(location=request.route_url('home'))
     return {"content": string}
 
