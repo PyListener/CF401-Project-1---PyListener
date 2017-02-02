@@ -18,7 +18,6 @@ psycopg2==2.6.2
 ptyprocess==0.5.1
 py==1.4.32
 Pygments==2.1.3
--e git+https://github.com/PyListener/CF401-Project-1---PyListener.git@dacf54c49e810f5a497f0132083d7436e094f7e7#egg=pylistener
 pyramid==1.7.3
 pyramid-debugtoolbar==3.0.5
 pyramid-jinja2==2.7
