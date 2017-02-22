@@ -11,8 +11,12 @@ from pylistener.security import check_credentials
 from passlib.apps import custom_app_context as pwd_context
 from pyramid.security import remember, forget
 
-from pylistener.models import User, AddressBook, Category, Attribute, UserAttributeLink
-from pylistener.scripts.initializedb import create_att_object, create_user_att_link_object, get_picture_binary
+from pylistener.models import\
+    User, AddressBook, Category, Attribute, UserAttributeLink
+
+from pylistener.scripts.initializedb import\
+    create_att_object, create_user_att_link_object, get_picture_binary
+
 from twilio.rest import TwilioRestClient
 
 import os
@@ -117,7 +121,7 @@ def register_view(request):
                 sub_user=sub_user
             )
         request.dbsession.add(new_user)
-        handle_new_contact(request, input_file, input_type, username)
+        add_new_contact(request, input_file, input_type, username)
         initialize_new_user(username, request)
         auth_head = remember(request, username)
         return HTTPFound(
