@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from pyramid.response import Response
 from pyramid.view import view_config
 
@@ -10,8 +12,8 @@ from passlib.apps import custom_app_context as pwd_context
 from pyramid.security import remember, forget
 
 from pylistener.models import User, AddressBook, Category, Attribute, UserAttributeLink
-from pylistener.scripts.pytextbelt import Textbelt
 from pylistener.scripts.initializedb import create_att_object, create_user_att_link_object, get_picture_binary
+from twilio.rest import TwilioRestClient
 
 import os
 import sys
@@ -29,7 +31,8 @@ def home_view(request):
     """Handle the home route."""
     if request.authenticated_userid:
         user = request.authenticated_userid
-        contacts = request.dbsession.query(AddressBook).join(User.address_rel).filter(User.username == user).all()
+        contacts = request.dbsession.query(AddressBook).join(User.address_rel)\
+            .filter(User.username == user).all()
         return {"contacts": contacts}
     return {}
 
@@ -60,25 +63,32 @@ def logout_view(request):
     return HTTPFound(location=request.route_url("home"), headers=auth_head)
 
 
-@view_config(route_name='manage', renderer='../templates/manage.jinja2', permission="manage")
+@view_config(
+    route_name='manage',
+    renderer='../templates/manage.jinja2',
+    permission="manage")
 def manage_view(request):
     """Manage user uploads."""
     if request.POST:
         try:
             if request.POST['contact']:
                 handle_new_contact(request)
-            return HTTPFound(location=request.route_url('manage', id=request.matchdict["id"]))
+            return HTTPFound(location=request.route_url(
+                'manage', id=request.matchdict["id"]))
         except KeyError:
             try:
                 if request.POST['category']:
                     handle_new_category(request)
-                return HTTPFound(location=request.route_url('manage', id=request.matchdict["id"]))
+                return HTTPFound(location=request.route_url(
+                    'manage', id=request.matchdict["id"]))
             except KeyError:
                 if request.POST['attribute']:
                     handle_new_attribute(request)
-                return HTTPFound(location=request.route_url('manage', id=request.matchdict["id"]))
+                return HTTPFound(location=request.route_url(
+                    'manage', id=request.matchdict["id"]))
 
-    user = request.dbsession.query(User).filter(User.username == request.authenticated_userid).first().id
+    user = request.dbsession.query(User).filter(User.username == request.authenticated_userid)\
+        .first().id
     categories = request.dbsession.query(Category).all()
     joined = request.dbsession.query(Attribute.id, Attribute.label, Attribute.picture, UserAttributeLink.user_id) \
         .join(UserAttributeLink, UserAttributeLink.attr_id == Attribute.id)
@@ -138,11 +148,14 @@ def attributes_view(request):
         if request.authenticated_userid:
             user = request.dbsession.query(User)\
                 .filter(User.username == request.authenticated_userid).first().id
+
             joined = request.dbsession.query(Attribute.id, Attribute.label, Attribute.picture, Attribute.cat_id, UserAttributeLink.priority, UserAttributeLink.user_id) \
                 .join(UserAttributeLink, UserAttributeLink.attr_id == Attribute.id)
+
             attributes = joined.filter(UserAttributeLink.user_id == user)\
                 .filter(Attribute.cat_id == request.matchdict["cat_id"])\
                 .order_by(UserAttributeLink.priority).all()
+
             return {"attributes": set(attributes), "addr_id": request.matchdict["add_id"], "category_id": request.matchdict["cat_id"]}
     except AttributeError:
         raise exception_response(403)
@@ -166,18 +179,15 @@ def display_view(request):
         .format(contact.name, user.sub_user, category.desc, attribute.desc)
 
     string = "{0}, {1} {2}".format(contact.name, category.desc, attribute.desc)
+
     if request.POST:
         try:
             if request.POST['email']:
-                yag = yagmail.SMTP(os.environ['EMAIL'], os.environ['PASSWORD'])
-                print(contact.email)
-                yag.send(contact.email, 'An email from Pylistener', content)
+                send_email(contact, content)
                 return HTTPFound(location=request.route_url('home'))
         except KeyError:
             if request.POST['sms']:
-                recipient = Textbelt.Recipient(contact.phone, "us")
-                print(contact.phone)
-                recipient.send(content)
+                send_sms(contact, content)
                 return HTTPFound(location=request.route_url('home'))
     return {"content": string}
 
@@ -218,6 +228,25 @@ def delete_handler(request):
 
 
 # -------  Helper functions ------- #
+
+def send_email(contact, content):
+    """Send email via yagmail SMTP api."""
+    yag = yagmail.SMTP(os.environ['EMAIL'], os.environ['PASSWORD'])
+    print(contact.email)
+    yag.send(contact.email, 'An email from Pylistener', content)
+
+
+def send_sms(contact, content):
+    """Send sms via twilio api."""
+    account_sid = os.environ["TWILIO_SID"]
+    auth_token = os.environ["TWILIO_TOKEN"]
+    twilio_number = os.environ["TWILIO_NUMBER"]
+    client = TwilioRestClient(account_sid, auth_token)
+    client.messages.create(
+        to='+1' + contact.phone,
+        from_=twilio_number,
+        body=content
+    )
 
 
 def handle_new_contact(request):
