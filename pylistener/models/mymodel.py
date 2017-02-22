@@ -64,4 +64,3 @@ class UserAttributeLink(Base):
     num_hits = Column(Integer, default=0, nullable=False)
     user_rel = relationship("User")
     attr_rel = relationship("Attribute")
-
