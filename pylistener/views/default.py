@@ -66,41 +66,16 @@ def manage_view(request):
     if request.POST:
         try:
             if request.POST['contact']:
-                input_file = request.POST['contact_img'].file
-                input_type = mimetypes.guess_type(request.POST['contact_img'].filename)[0]
-                if input_type[:5] == 'image':
-                    user_id = request.matchdict["id"]
-                    handle_new_contact(request, input_file, input_type, user_id)
-                    message = "New Contact Added."
-                    request.session.flash(message)
-                else:
-                    message = "Please try again with an image file."
-                    request.session.flash(message)
+                handle_new_contact(request)
             return HTTPFound(location=request.route_url('manage', id=request.matchdict["id"]))
         except KeyError:
             try:
                 if request.POST['category']:
-                    input_file = request.POST['cat_img'].file
-                    input_type = mimetypes.guess_type(request.POST['cat_img'].filename)[0]
-                if input_type[:5] == 'image':
-                    handle_new_category(request, input_file, input_type)
-                    message = "New Category Added. Don't forget Attributes!"
-                    request.session.flash(message)
-                else:
-                    message = "Please try again with an image file."
-                    request.session.flash(message)
+                    handle_new_category(request)
                 return HTTPFound(location=request.route_url('manage', id=request.matchdict["id"]))
             except KeyError:
                 if request.POST['attribute']:
-                    input_file = request.POST['attr_img'].file
-                    input_type = mimetypes.guess_type(request.POST['attr_img'].filename)[0]
-                if input_type[:5] == 'image':
-                    handle_new_attribute(request, input_file, input_type)
-                    message = "New Attribute Added."
-                    request.session.flash(message)
-                else:
-                    message = "Please try again with an image file."
-                    request.session.flash(message)
+                    handle_new_attribute(request)
                 return HTTPFound(location=request.route_url('manage', id=request.matchdict["id"]))
 
     user = request.dbsession.query(User).filter(User.username == request.authenticated_userid).first().id
@@ -186,8 +161,10 @@ def display_view(request):
     category = request.dbsession.query(Category).filter(Category.id == cat_id).first()
     att_id = request.matchdict["att_id"]
     attribute = request.dbsession.query(Attribute).filter(Attribute.id == att_id).first()
+
     content = "{0}, you have received a message from {1}. \n\t \"{2} {3}\"" \
         .format(contact.name, user.sub_user, category.desc, attribute.desc)
+
     string = "{0}, {1} {2}".format(contact.name, category.desc, attribute.desc)
     if request.POST:
         try:
@@ -198,9 +175,9 @@ def display_view(request):
                 return HTTPFound(location=request.route_url('home'))
         except KeyError:
             if request.POST['sms']:
-                Recipient = Textbelt.Recipient(contact.phone, "us")
+                recipient = Textbelt.Recipient(contact.phone, "us")
                 print(contact.phone)
-                Recipient.send(content)
+                recipient.send(content)
                 return HTTPFound(location=request.route_url('home'))
     return {"content": string}
 
@@ -240,7 +217,24 @@ def delete_handler(request):
     return HTTPFound(request.route_url("manage", id=user))
 
 
-def handle_new_contact(request, input_file, input_type, username):
+# -------  Helper functions ------- #
+
+
+def handle_new_contact(request):
+    """Handler function for a new contact in manage view."""
+    input_file = request.POST['contact_img'].file
+    input_type = mimetypes.guess_type(request.POST['contact_img'].filename)[0]
+    if input_type[:5] == 'image':
+        user_id = request.matchdict["id"]
+        add_new_contact(request, input_file, input_type, user_id)
+        message = "New Contact Added."
+        request.session.flash(message)
+    else:
+        message = "Please try again with an image file."
+        request.session.flash(message)
+
+
+def add_new_contact(request, input_file, input_type, username):
     """Add new contact to DB."""
     name = request.POST["contact_name"]
     phone = request.POST["contact_phone"]
@@ -258,7 +252,20 @@ def handle_new_contact(request, input_file, input_type, username):
     request.dbsession.add(new_contact)
 
 
-def handle_new_category(request, input_file, input_type):
+def handle_new_category(request):
+    """Handler function for new category in manage view."""
+    input_file = request.POST['cat_img'].file
+    input_type = mimetypes.guess_type(request.POST['cat_img'].filename)[0]
+    if input_type[:5] == 'image':
+        add_new_category(request, input_file, input_type)
+        message = "New Category Added. Don't forget Attributes!"
+        request.session.flash(message)
+    else:
+        message = "Please try again with an image file."
+        request.session.flash(message)
+
+
+def add_new_category(request, input_file, input_type):
     """Add new category to DB."""
     label = request.POST["cat_label"]
     cat_desc = request.POST["cat_desc"]
@@ -272,7 +279,20 @@ def handle_new_category(request, input_file, input_type):
     request.dbsession.add(new_cat)
 
 
-def handle_new_attribute(request, input_file, input_type):
+def handle_new_attribute(request):
+    """Handler function for a new attribute in manage view."""
+    input_file = request.POST['attr_img'].file
+    input_type = mimetypes.guess_type(request.POST['attr_img'].filename)[0]
+    if input_type[:5] == 'image':
+        handle_new_attribute(request, input_file, input_type)
+        message = "New Attribute Added."
+        request.session.flash(message)
+    else:
+        message = "Please try again with an image file."
+        request.session.flash(message)
+
+
+def add_new_attribute(request, input_file, input_type):
     """Add new attribute to DB."""
     label = request.POST["attr_label"]
     desc = request.POST["attr_desc"]
