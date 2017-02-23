@@ -11,7 +11,7 @@ from pylistener.models import User, AddressBook, Category, Attribute, UserAttrib
 from pylistener.models.meta import Base
 from passlib.apps import custom_app_context as pwd_context
 
-TEST_DB = os.environ.get("DATABASE_URL", "test")
+TEST_DB = os.environ.get("TEST_DB", "test")
 
 
 @pytest.fixture(scope="session")
@@ -231,17 +231,6 @@ def test_register_view(dummy_request):
     assert result == {}
 
 
-# def test_register_view_redirects(dummy_request):
-#     """Test that when you register you are redirected."""
-#     from .views.default import register_view
-#     from pyramid.httpexceptions import HTTPFound
-#     dummy_request.POST["username"] = "test"
-#     dummy_request.POST["password"] = "test"
-#     dummy_request.POST["sub_user"] = "test"
-#     result = register_view(dummy_request)
-#     assert isinstance(result, HTTPFound)
-
-
 def test_not_found_view(dummy_request):
     """Test not found view."""
     from .views.notfound import notfound_view
@@ -405,14 +394,14 @@ def fill_the_db(testapp, new_user):
         dbsession.add(new_user)
         new_category = Category(
             label="category label",
-            desc="desc",
+            desc="category",
             picture=picture,
             pic_mime="image/jpeg"
         )
         dbsession.add(new_category)
         new_attribute = Attribute(
             label="attribute label",
-            desc="description label",
+            desc="attribute",
             picture=picture,
             cat_id=1,
             pic_mime="image/jpeg"
@@ -464,10 +453,10 @@ def test_attribute_view_authenticated(testapp, fill_the_db, login_fixture):
     assert response.status_code == 200
 
 
-# def test_attribute_authenticated_has_attributes(testapp, login_fixture, fill_the_db):
-#     """Test attribute view renders attributes when authenticated."""
-#     response = testapp.get('/attribute/1/1', params=login_fixture)
-#     assert len(response.html.find_all("img")) == 1
+def test_attribute_authenticated_has_attributes(testapp, login_fixture, fill_the_db):
+    """Test attribute view renders attributes when authenticated."""
+    response = testapp.get('/attribute/1/1', params=login_fixture)
+    assert len(response.html.find_all("img")) == 2
 
 
 def test_display_view_authenticated(testapp, fill_the_db, login_fixture):
@@ -479,7 +468,8 @@ def test_display_view_authenticated(testapp, fill_the_db, login_fixture):
 def test_display_authenticated_has_string(testapp, fill_the_db, login_fixture):
     """Test display view renders the string when authenticated."""
     response = testapp.get("/display/1/1/1", params=login_fixture)
-    assert len(response.html.find_all('h1')) == 1
+    display_h1 = response.html.find_all('h1')[1]
+    assert "user name, category attribute" in display_h1
 
 
 def test_manage_view_get_request(testapp, fill_the_db, login_fixture):
@@ -488,4 +478,3 @@ def test_manage_view_get_request(testapp, fill_the_db, login_fixture):
     assert response.status == '200 OK'
     assert len(response.html.find_all('form')) == 3
     assert len(response.html.find_all('li', class_='manage_list_item')) == 1
-
