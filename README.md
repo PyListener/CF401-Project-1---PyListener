@@ -58,8 +58,8 @@ Open `venv/bin/activate` in your editor and pass your own environment variable a
 - export EMAIL= *the gmail account you want to user to send emails from the app.*
 - export PASSWORD= *your gmail password*
 - export TWILIO_SID= *the twilio account sid you want to use to send emails from the app.*
-export TWILIO_TOKEN= *your twilio token*
-export TWILIO_NUMBER= *your twilio number in the following format: "+12345678910"*
+- export TWILIO_TOKEN= *your twilio token*
+- export TWILIO_NUMBER= *your twilio number in the following format: "+12345678910"*
 
 Then activate your environment:
 
@@ -76,13 +76,13 @@ Once your environment has been activated, make sure to install the requirements:
 You are then ready to initialize your database and run the app!
 
 ```bash
-$ initialize_db development.ini to initialize the database
+$ initialize_db development.ini
 $ pserve development.ini
 ```
 
 # Special Thanks:
 
-[Nicholas Hunt-Walker](https://github.com/nhuntwalker/)
-[Twilio](https://github.com/twilio/twilio-python)
-[Yagmail](https://github.com/kootenpv/yagmail)
+[Nicholas Hunt-Walker](https://github.com/nhuntwalker/)  
+[Twilio](https://github.com/twilio/twilio-python)  
+[Yagmail](https://github.com/kootenpv/yagmail)  
 And Maelle's son Charlie who suffers from Apraxia
