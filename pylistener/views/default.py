@@ -11,8 +11,12 @@ from pylistener.security import check_credentials
 from passlib.apps import custom_app_context as pwd_context
 from pyramid.security import remember, forget
 
-from pylistener.models import User, AddressBook, Category, Attribute, UserAttributeLink
-from pylistener.scripts.initializedb import create_att_object, create_user_att_link_object, get_picture_binary
+from pylistener.models import\
+    User, AddressBook, Category, Attribute, UserAttributeLink
+
+from pylistener.scripts.initializedb import\
+    create_att_object, create_user_att_link_object, get_picture_binary
+
 from twilio.rest import TwilioRestClient
 
 import os
@@ -21,8 +25,6 @@ import shutil
 import yagmail
 import mimetypes
 import json
-import requests
-
 
 
 HERE = os.path.dirname(os.path.realpath(__file__))
@@ -33,7 +35,8 @@ def home_view(request):
     """Handle the home route."""
     if request.authenticated_userid:
         user = request.authenticated_userid
-        contacts = request.dbsession.query(AddressBook).join(User.address_rel).filter(User.username == user).all()
+        contacts = request.dbsession.query(AddressBook).join(User.address_rel)\
+            .filter(User.username == user).all()
         return {"contacts": contacts}
     return {}
 
@@ -64,50 +67,32 @@ def logout_view(request):
     return HTTPFound(location=request.route_url("home"), headers=auth_head)
 
 
-@view_config(route_name='manage', renderer='../templates/manage.jinja2', permission="manage")
+@view_config(
+    route_name='manage',
+    renderer='../templates/manage.jinja2',
+    permission="manage")
 def manage_view(request):
     """Manage user uploads."""
     if request.POST:
         try:
             if request.POST['contact']:
-                input_file = request.POST['contact_img'].file
-                input_type = mimetypes.guess_type(request.POST['contact_img'].filename)[0]
-                if input_type[:5] == 'image':
-                    user_id = request.matchdict["id"]
-                    handle_new_contact(request, input_file, input_type, user_id)
-                    message = "New Contact Added."
-                    request.session.flash(message)
-                else:
-                    message = "Please try again with an image file."
-                    request.session.flash(message)
-            return HTTPFound(location=request.route_url('manage', id=request.matchdict["id"]))
+                handle_new_contact(request)
+            return HTTPFound(location=request.route_url(
+                'manage', id=request.matchdict["id"]))
         except KeyError:
             try:
                 if request.POST['category']:
-                    input_file = request.POST['cat_img'].file
-                    input_type = mimetypes.guess_type(request.POST['cat_img'].filename)[0]
-                if input_type[:5] == 'image':
-                    handle_new_category(request, input_file, input_type)
-                    message = "New Category Added. Don't forget Attributes!"
-                    request.session.flash(message)
-                else:
-                    message = "Please try again with an image file."
-                    request.session.flash(message)
-                return HTTPFound(location=request.route_url('manage', id=request.matchdict["id"]))
+                    handle_new_category(request)
+                return HTTPFound(location=request.route_url(
+                    'manage', id=request.matchdict["id"]))
             except KeyError:
                 if request.POST['attribute']:
-                    input_file = request.POST['attr_img'].file
-                    input_type = mimetypes.guess_type(request.POST['attr_img'].filename)[0]
-                if input_type[:5] == 'image':
-                    handle_new_attribute(request, input_file, input_type)
-                    message = "New Attribute Added."
-                    request.session.flash(message)
-                else:
-                    message = "Please try again with an image file."
-                    request.session.flash(message)
-                return HTTPFound(location=request.route_url('manage', id=request.matchdict["id"]))
+                    handle_new_attribute(request)
+                return HTTPFound(location=request.route_url(
+                    'manage', id=request.matchdict["id"]))
 
-    user = request.dbsession.query(User).filter(User.username == request.authenticated_userid).first().id
+    user = request.dbsession.query(User).filter(User.username == request.authenticated_userid)\
+        .first().id
     categories = request.dbsession.query(Category).all()
     joined = request.dbsession.query(Attribute.id, Attribute.label, Attribute.picture, UserAttributeLink.user_id) \
         .join(UserAttributeLink, UserAttributeLink.attr_id == Attribute.id)
@@ -136,7 +121,7 @@ def register_view(request):
                 sub_user=sub_user
             )
         request.dbsession.add(new_user)
-        handle_new_contact(request, input_file, input_type, username)
+        add_new_contact(request, input_file, input_type, username)
         initialize_new_user(username, request)
         auth_head = remember(request, username)
         return HTTPFound(
@@ -167,11 +152,14 @@ def attributes_view(request):
         if request.authenticated_userid:
             user = request.dbsession.query(User)\
                 .filter(User.username == request.authenticated_userid).first().id
+
             joined = request.dbsession.query(Attribute.id, Attribute.label, Attribute.picture, Attribute.cat_id, UserAttributeLink.priority, UserAttributeLink.user_id) \
                 .join(UserAttributeLink, UserAttributeLink.attr_id == Attribute.id)
+
             attributes = joined.filter(UserAttributeLink.user_id == user)\
                 .filter(Attribute.cat_id == request.matchdict["cat_id"])\
                 .order_by(UserAttributeLink.priority).all()
+
             return {"attributes": set(attributes), "addr_id": request.matchdict["add_id"], "category_id": request.matchdict["cat_id"]}
     except AttributeError:
         raise exception_response(403)
@@ -190,27 +178,20 @@ def display_view(request):
     category = request.dbsession.query(Category).filter(Category.id == cat_id).first()
     att_id = request.matchdict["att_id"]
     attribute = request.dbsession.query(Attribute).filter(Attribute.id == att_id).first()
+
     content = "{0}, you have received a message from {1}. \n\t \"{2} {3}\"" \
         .format(contact.name, user.sub_user, category.desc, attribute.desc)
+
     string = "{0}, {1} {2}".format(contact.name, category.desc, attribute.desc)
+
     if request.POST:
         try:
             if request.POST['email']:
-                yag = yagmail.SMTP(os.environ['EMAIL'], os.environ['PASSWORD'])
-                print(contact.email)
-                yag.send(contact.email, 'An email from Pylistener', content)
+                send_email(contact, content)
                 return HTTPFound(location=request.route_url('home'))
         except KeyError:
             if request.POST['sms']:
-                account_sid = os.environ["TWILIO_SID"]
-                auth_token = os.environ["TWILIO_TOKEN"]
-                twilio_number = os.environ["TWILIO_NUMBER"]
-                client = TwilioRestClient(account_sid, auth_token)
-                client.messages.create(
-                    to='+1' + contact.phone,
-                    from_=twilio_number,
-                    body=content
-                )
+                send_sms(contact, content)
                 return HTTPFound(location=request.route_url('home'))
     return {"content": string}
 
@@ -250,7 +231,43 @@ def delete_handler(request):
     return HTTPFound(request.route_url("manage", id=user))
 
 
-def handle_new_contact(request, input_file, input_type, username):
+# -------  Helper functions ------- #
+
+def send_email(contact, content):
+    """Send email via yagmail SMTP api."""
+    yag = yagmail.SMTP(os.environ['EMAIL'], os.environ['PASSWORD'])
+    print(contact.email)
+    yag.send(contact.email, 'An email from Pylistener', content)
+
+
+def send_sms(contact, content):
+    """Send sms via twilio api."""
+    account_sid = os.environ["TWILIO_SID"]
+    auth_token = os.environ["TWILIO_TOKEN"]
+    twilio_number = os.environ["TWILIO_NUMBER"]
+    client = TwilioRestClient(account_sid, auth_token)
+    client.messages.create(
+        to='+1' + contact.phone,
+        from_=twilio_number,
+        body=content
+    )
+
+
+def handle_new_contact(request):
+    """Handler function for a new contact in manage view."""
+    input_file = request.POST['contact_img'].file
+    input_type = mimetypes.guess_type(request.POST['contact_img'].filename)[0]
+    if input_type[:5] == 'image':
+        user_id = request.matchdict["id"]
+        add_new_contact(request, input_file, input_type, user_id)
+        message = "New Contact Added."
+        request.session.flash(message)
+    else:
+        message = "Please try again with an image file."
+        request.session.flash(message)
+
+
+def add_new_contact(request, input_file, input_type, username):
     """Add new contact to DB."""
     name = request.POST["contact_name"]
     phone = request.POST["contact_phone"]
@@ -268,7 +285,20 @@ def handle_new_contact(request, input_file, input_type, username):
     request.dbsession.add(new_contact)
 
 
-def handle_new_category(request, input_file, input_type):
+def handle_new_category(request):
+    """Handler function for new category in manage view."""
+    input_file = request.POST['cat_img'].file
+    input_type = mimetypes.guess_type(request.POST['cat_img'].filename)[0]
+    if input_type[:5] == 'image':
+        add_new_category(request, input_file, input_type)
+        message = "New Category Added. Don't forget Attributes!"
+        request.session.flash(message)
+    else:
+        message = "Please try again with an image file."
+        request.session.flash(message)
+
+
+def add_new_category(request, input_file, input_type):
     """Add new category to DB."""
     label = request.POST["cat_label"]
     cat_desc = request.POST["cat_desc"]
@@ -282,7 +312,20 @@ def handle_new_category(request, input_file, input_type):
     request.dbsession.add(new_cat)
 
 
-def handle_new_attribute(request, input_file, input_type):
+def handle_new_attribute(request):
+    """Handler function for a new attribute in manage view."""
+    input_file = request.POST['attr_img'].file
+    input_type = mimetypes.guess_type(request.POST['attr_img'].filename)[0]
+    if input_type[:5] == 'image':
+        handle_new_attribute(request, input_file, input_type)
+        message = "New Attribute Added."
+        request.session.flash(message)
+    else:
+        message = "Please try again with an image file."
+        request.session.flash(message)
+
+
+def add_new_attribute(request, input_file, input_type):
     """Add new attribute to DB."""
     label = request.POST["attr_label"]
     desc = request.POST["attr_desc"]

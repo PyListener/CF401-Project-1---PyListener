@@ -1,12 +1,6 @@
-import os
 
 from setuptools import setup, find_packages
 
-here = os.path.abspath(os.path.dirname(__file__))
-with open(os.path.join(here, 'README.txt')) as f:
-    README = f.read()
-with open(os.path.join(here, 'CHANGES.txt')) as f:
-    CHANGES = f.read()
 
 requires = [
     'pyramid',
@@ -22,19 +16,18 @@ requires = [
     'yagmail',
     'keyring',
     'requests'
-    ]
+]
 
 tests_require = [
     'WebTest >= 1.3.1',  # py3 compat
     'pytest',  # includes virtualenv
     'pytest-cov',
-    ]
+]
 
 setup(name='pylistener',
       version='0.0',
       description='''A simple tool designed to enable people with Apraxia
         to communicate.''',
-      long_description=README + '\n\n' + CHANGES,
       classifiers=[
           "Programming Language :: Python",
           "Framework :: Pyramid",

@@ -3,6 +3,7 @@
 
 import pytest
 import transaction
+import os
 
 from pyramid import testing
 
@@ -10,7 +11,7 @@ from pylistener.models import User, AddressBook, Category, Attribute, UserAttrib
 from pylistener.models.meta import Base
 from passlib.apps import custom_app_context as pwd_context
 
-TEST_DB = 'postgres://CCallahanIV@localhost:5432/test_pylistener'
+TEST_DB = os.environ.get("DATABASE_URL", "test")
 
 
 @pytest.fixture(scope="session")
