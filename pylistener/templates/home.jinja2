@@ -1,0 +1,22 @@
+{% extends 'layout.jinja2' %}
+{% block content %}
+{% if request.authenticated_userid %}
+    <div class="main_container">
+    <h1>With whom would you like to speak?</h1>
+    <br>
+    <ul>
+        {% for contact in contacts %}
+        <li class="list_item">
+            <a class="link_item" href="{{request.route_url('category', add_id=contact.id)}}">
+                <img src="{{ request.route_url('picture', db_id='add', pic_id=contact.id) }}">
+                <p>{{ contact.name }}</p>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    </div>
+{% else %}
+  <p>You are not authenticated.</p>
+{% endif %}
+
+{% endblock %}

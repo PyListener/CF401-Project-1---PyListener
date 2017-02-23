@@ -1,0 +1,219 @@
+[{
+    "label": "wants",
+    "desc": "I would like",
+    "picture": "img_wants/want.jpg",
+    "pic_mime": "image/jpeg",
+    "attributes": [{
+        "label": "play",
+        "desc": "to play.",
+        "picture": "img_wants/play.png",
+        "pic_mime": "image/png"
+    }, {
+        "label": "toy",
+        "desc": "my toy.",
+        "picture": "img_wants/toys.png",
+        "pic_mime": "image/png"
+    }, {
+        "label": "leave",
+        "desc": "to leave.",
+        "picture": "img_wants/leave.png",
+        "pic_mime": "image/png"
+    }, {
+        "label": "game",
+        "desc": "to play a game.",
+        "picture": "img_wants/TV.png",
+        "pic_mime": "image/png"
+    }, {
+        "label": "movie",
+        "desc": "to watch a movie.",
+        "picture": "img_wants/movie_theater.png",
+        "pic_mime": "image/png"
+    }, {
+        "label": "book",
+        "desc": "to read a book.",
+        "picture": "img_wants/book.png",
+        "pic_mime": "image/png"
+    }, {
+        "label": "that",
+        "desc": "that thing.",
+        "picture": "img_wants/that_finger.jpg",
+        "pic_mime": "image/jpeg"
+    }, {
+        "label": "wine",
+        "desc": "some wine.",
+        "picture": "img_wants/wine.jpg",
+        "pic_mime": "image/jpeg"
+    }, {
+        "label": "music",
+        "desc": "to listen to music.",
+        "picture": "img_wants/music.jpg",
+        "pic_mime": "image/jpeg"
+    }, {
+        "label": "clothes",
+        "desc": "a change of clothes.",
+        "picture": "img_wants/clothes.png",
+        "pic_mime": "image/png"
+    }]
+}, {
+    "label": "needs",
+    "desc": "I need",
+    "picture": "img_needs/need.jpg",
+    "pic_mime": "image/jpeg",
+    "attributes": [{
+        "label": "food",
+        "desc": "something to eat.",
+        "picture": "img_needs/food.png",
+        "pic_mime": "image/png"
+    }, {
+        "label": "medicine",
+        "desc": "my medicine.",
+        "picture": "img_needs/medicine.jpg",
+        "pic_mime": "image/jpeg"
+    }, {
+        "label": "restroom",
+        "desc": "to use the restroom",
+        "picture": "img_needs/bathroom.png",
+        "pic_mime": "image/png"
+    }, {
+        "label": "sleep",
+        "desc": "to sleep",
+        "picture": "img_needs/bed.png",
+        "pic_mime": "image/png"
+    }, {
+        "label": "help",
+        "desc": "help.",
+        "picture": "img_needs/doctor.jpg",
+        "pic_mime": "image/jpeg"
+    }, {
+        "label": "shower",
+        "desc": "to bathe.",
+        "picture": "img_needs/shower.png",
+        "pic_mime": "image/png"
+    }]
+}, {
+    "label": "emotions",
+    "desc": "I feel",
+    "picture": "img_emotions/emotions.jpg",
+    "pic_mime": "image/jpeg",
+    "attributes": [{
+        "label": "happy.",
+        "desc": "happy.",
+        "picture": "img_emotions/happy.png",
+        "pic_mime": "image/png"
+    }, {
+        "label": "sad",
+        "desc": "sad.",
+        "picture": "img_emotions/sad.png",
+        "pic_mime": "image/png"
+    }, {
+        "label": "lonely",
+        "desc": "lonely.",
+        "picture": "img_emotions/bored_lonely.jpg",
+        "pic_mime": "image/jpeg"
+    }, {
+        "label": "mad",
+        "desc": "mad.",
+        "picture": "img_emotions/mad.png",
+        "pic_mime": "image/png"
+    }, {
+        "label": "tired",
+        "desc": "tired.",
+        "picture": "img_emotions/tired.png",
+        "pic_mime": "image/png"
+    }, {
+        "label": "scared",
+        "desc": "scared.",
+        "picture": "img_emotions/scared.png",
+        "pic_mime": "image/png"
+    }, {
+        "label": "confused",
+        "desc": "confused.",
+        "picture": "img_emotions/confused.png",
+        "pic_mime": "image/png"
+    }, {
+        "label": "surprised",
+        "desc": "surprised",
+        "picture": "img_emotions/surprised.png",
+        "pic_mime": "image/png"
+    }, {
+        "label": "sick",
+        "desc": "sick.",
+        "picture": "img_emotions/sick.png",
+        "pic_mime": "image/png"
+    }, {
+        "label": "worried",
+        "desc": "worried.",
+        "picture": "img_emotions/worried.png",
+        "pic_mime": "image/png"
+    }
+
+]
+
+}, {
+    "label": "tell",
+    "desc": "",
+    "picture": "img_tell/tell.jpg",
+    "pic_mime": "image/jpeg",
+    "attributes": [{
+        "label": "thank you",
+        "desc": "thank you.",
+        "picture": "img_tell/thank_you.jpg",
+        "pic_mime": "image/jpeg"
+    }, {
+        "label": "love",
+        "desc": "I love you.",
+        "picture": "img_tell/love_heart.jpg",
+        "pic_mime": "image/jpeg"
+    }, {
+        "label": "stop",
+        "desc": "please stop.",
+        "picture": "img_emotions/no_forbidden_circle_slash.png",
+        "pic_mime": "image/png"
+    }, {
+        "label": "yes",
+        "desc": "yes.",
+        "picture": "img_tell/yes_head_nod.jpg",
+        "pic_mime": "image/jpeg"
+    }, {
+        "label": "no",
+        "desc": "no.",
+        "picture": "img_tell/no_head_shake.jpg",
+        "pic_mime": "image/jpeg"
+    }, {
+        "label": "don't know",
+        "desc": "I don't know.",
+        "picture": "img_emotions/confused.png",
+        "pic_mime": "image/png"
+    }]
+}, {
+    "label": "questions",
+    "desc": "Can you tell me,",
+    "picture": "img_questions/question.jpg",
+    "pic_mime": "image/jpeg",
+    "attributes": [{
+        "label": "why",
+        "desc": "why?",
+        "picture": "img_questions/why.jpg",
+        "pic_mime": "image/jpeg"
+    }, {
+        "label": "how",
+        "desc": "how?",
+        "picture": "img_questions/how.jpg",
+        "pic_mime": "image/jpeg"
+    }, {
+        "label": "when",
+        "desc": "when?",
+        "picture": "img_questions/when.jpg",
+        "pic_mime": "image/jpeg"
+    }, {
+        "label": "who",
+        "desc": "who?",
+        "picture": "img_questions/who.jpg",
+        "pic_mime": "image/jpeg"
+    }, {
+        "label": "what",
+        "desc": "WAT?",
+        "picture": "img_questions/what.jpg",
+        "pic_mime": "image/jpeg"
+    }]
+}]

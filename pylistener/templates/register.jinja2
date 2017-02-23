@@ -1,0 +1,30 @@
+{% extends 'layout.jinja2' %}
+{% block content %}
+{% if request.session.peek_flash() %}
+        <div class="flashes">
+        {% for message in request.session.pop_flash()%}
+            {{ message }}
+        {% endfor %}
+</div>
+{% endif %}
+
+<form class="manage_form" method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ request.session.get_csrf_token() }}">
+    <label>Guardian's Name:</label>
+    <input type="text" name="contact_name">
+    <label>Password:</label>
+    <input type="password" name="password">
+    <label for="contact_phone">Phone</label>
+    <input name="contact_phone" type="text" >
+    <label for="contact_email">Email</label>
+    <input name="contact_email" type="text" >
+    <br>
+    <label for="contact_img">Upload Picture:</label>
+    <input name="contact_img" type="file" required>
+    <label>User's Name:</label>
+    <input type="text" name="sub_user">
+    <br>
+    <input class="manage_button" type="submit" value="Register">
+    <br>
+</form>
+{% endblock content%}
