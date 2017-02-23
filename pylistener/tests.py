@@ -4,6 +4,7 @@
 import pytest
 import transaction
 import os
+import cgi
 
 from pyramid import testing
 
