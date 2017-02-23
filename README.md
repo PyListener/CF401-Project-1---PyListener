@@ -85,4 +85,4 @@ $ pserve development.ini
 [Nicholas Hunt-Walker](https://github.com/nhuntwalker/)  
 [Twilio](https://github.com/twilio/twilio-python)  
 [Yagmail](https://github.com/kootenpv/yagmail)  
-And Maelle's son Charlie who suffers from Apraxia
+Charlie, Maelle's son, who suffers from Apraxia
